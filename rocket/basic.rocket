@@ -1,0 +1,135 @@
+<sync rows="512">
+	<tracks>
+		<track name="global.z">
+			<key interpolation="1" row="0" value="18"/>
+			<key interpolation="1" row="128" value="173"/>
+			<key interpolation="1" row="256" value="330"/>
+			<key interpolation="1" row="384" value="487"/>
+			<key interpolation="0" row="511" value="1000"/>
+		</track>
+		<track name="doors.rot">
+			<key interpolation="0" row="0" value="1"/>
+			<key interpolation="0" row="31" value="2"/>
+		</track>
+		<track name="doors.door">
+			<key interpolation="0" row="0" value="0"/>
+			<key interpolation="1" row="120" value="0"/>
+			<key interpolation="0" row="126" value="9"/>
+			<key interpolation="0" row="130" value="9"/>
+			<key interpolation="0" row="238" value="0"/>
+			<key interpolation="1" row="376" value="10"/>
+			<key interpolation="0" row="383" value="16"/>
+		</track>
+		<track name="doors.lamp">
+			<key interpolation="0" row="0" value="0"/>
+		</track>
+		<track name="doors.cat">
+			<key interpolation="0" row="0" value="0"/>
+		</track>
+		<track name="doors.head">
+			<key interpolation="0" row="0" value="0"/>
+		</track>
+		<track name="doors.chair">
+			<key interpolation="0" row="0" value="0"/>
+			<key interpolation="1" row="248" value="3"/>
+			<key interpolation="0" row="280" value="16"/>
+		</track>
+		<track name="doors.tables">
+			<key interpolation="0" row="0" value="0"/>
+		</track>
+		<track name="doors.zeppe">
+			<key interpolation="0" row="0" value="0"/>
+		</track>
+		<track name="doors.frame">
+			<key interpolation="0" row="0" value="1"/>
+		</track>
+		<track name="global.fade">
+			<key interpolation="0" row="0" value="0"/>
+			<key interpolation="1" row="74" value="0"/>
+			<key interpolation="0" row="91" value="1"/>
+			<key interpolation="1" row="334" value="0"/>
+			<key interpolation="0" row="352" value="1"/>
+		</track>
+		<track name="doorsOdd.rot">
+			<key interpolation="0" row="0" value="0"/>
+			<key interpolation="1" row="119" value="0"/>
+			<key interpolation="0" row="125" value="1"/>
+			<key interpolation="0" row="373" value="0.5"/>
+		</track>
+		<track name="doorsOdd.door">
+			<key interpolation="0" row="0" value="0"/>
+			<key interpolation="1" row="248" value="0"/>
+			<key interpolation="0" row="256" value="9"/>
+			<key interpolation="0" row="373" value="0"/>
+		</track>
+		<track name="doorsOdd.lamp">
+			<key interpolation="0" row="0" value="0"/>
+			<key interpolation="0" row="119" value="1"/>
+			<key interpolation="0" row="374" value="0"/>
+		</track>
+		<track name="doorsOdd.cat">
+			<key interpolation="0" row="0" value="0"/>
+		</track>
+		<track name="doorsOdd.head">
+			<key interpolation="0" row="0" value="0"/>
+			<key interpolation="0" row="119" value="1"/>
+			<key interpolation="0" row="374" value="0"/>
+		</track>
+		<track name="doorsOdd.chair">
+			<key interpolation="0" row="0" value="0"/>
+			<key interpolation="0" row="374" value="2"/>
+		</track>
+		<track name="doorsOdd.tables">
+			<key interpolation="0" row="0" value="0"/>
+		</track>
+		<track name="doorsOdd.zeppe">
+			<key interpolation="0" row="0" value="0"/>
+			<key interpolation="0" row="376" value="0"/>
+		</track>
+		<track name="doorsOdd.frame">
+			<key interpolation="0" row="0" value="0"/>
+			<key interpolation="0" row="376" value="2"/>
+		</track>
+		<track name="doors.light">
+			<key interpolation="0" row="0" value="1"/>
+		</track>
+		<track name="doors.texoff">
+			<key interpolation="1" row="0" value="0"/>
+			<key interpolation="0" row="16" value="1"/>
+		</track>
+		<track name="doorsOdd.light">
+			<key interpolation="0" row="0" value="1"/>
+		</track>
+		<track name="doorsOdd.texoff">
+			<key interpolation="1" row="0" value="0.2"/>
+			<key interpolation="0" row="16" value="1"/>
+		</track>
+		<track name="doors.texsel">
+			<key interpolation="0" row="0" value="2"/>
+		</track>
+		<track name="train.rot">
+			<key interpolation="0" row="200" value="1"/>
+		</track>
+		<track name="train.door"/>
+		<track name="train.train">
+			<key interpolation="1" row="300" value="0"/>
+			<key interpolation="0" row="430" value="3"/>
+		</track>
+		<track name="train.light">
+			<key interpolation="0" row="120" value="1"/>
+			<key interpolation="0" row="430" value="10"/>
+		</track>
+		<track name="train.texsel">
+			<key interpolation="0" row="0" value="0"/>
+			<key interpolation="0" row="430" value="0"/>
+		</track>
+		<track name="doorsOdd.texsel"/>
+		<track name="train.ad">
+			<key interpolation="0" row="430" value="3"/>
+		</track>
+		<track name="global.image">
+			<key interpolation="0" row="0" value="0"/>
+		</track>
+	</tracks>
+	<bookmarks/>
+</sync>

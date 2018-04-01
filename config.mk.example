@@ -1,0 +1,7 @@
+# make clean recommended after changing config
+CONFIG_3DS_IP := 192.168.1.144
+CONFIG_PC_IP := 192.168.1.42
+COFIG_PLAYER_MODE := 1
+CONFIG_CITRA_COMMAND := /mnt/c/Users/halcy/AppData/Local/citra/nightly-mingw/citra-qt.exe
+CONFIG_CITRA_TEMP_FILE_TO := /mnt/c/temp/run.3dsx
+CONFIG_CITRA_TEMP_FILE_FROM := C:/temp/run.3dsx

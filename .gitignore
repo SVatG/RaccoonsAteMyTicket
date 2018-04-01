@@ -1,0 +1,10 @@
+/build/*
+!/build/Makefile
+*~
+*.3dsx
+/romfs/tex_*.bin
+/romfs/music.bin
+/romfs/music.ogg
+/romfs/*.vbo
+/tooling/ufbxconv
+config.mk
