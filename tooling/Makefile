@@ -1,2 +1,2 @@
 all:
-	gcc -g ufbxconv.c ufbx.c -lm -I../source -o ufbxconv
+	$(CC) -g ufbxconv.c ufbx.c -lm -I../source -o ufbxconv

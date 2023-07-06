@@ -60,6 +60,10 @@ FBX_SENTINEL = .fbx_rebuild_sentry
 # Want GNU extended syntax
 .SUFFIXES:
 
+# create dir if doesn't exist yet
+$(ROMFS)/:
+	@mkdir -vp "$@"
+
 # Base compilation / assembly build rules
 %.o: %.c music.ogg
 	$(CC) $(CFLAGS) -c $< -o $@
@@ -68,22 +72,23 @@ FBX_SENTINEL = .fbx_rebuild_sentry
 	$(AS) $(ASFLAGS) -c $< -o $@ 
 
 # PNG-to-bin with tex3ds
-%.bin: %.png
+%.bin: %.png $(ROMFS)/
 	$(TEX) $< -o $(ROMFS)/$@
 
 # flac-to-ogg / mp3-to-ogg / ogg-to-ogg with basic music converter
-%.ogg: %.flac
+%.ogg: %.flac $(ROMFS)/
 	./../tooling/convertmusic.sh $< $(ROMFS)/$@ $(BUILD)/music_meta.h
 
-%.ogg: %.mp3
+%.ogg: %.mp3 $(ROMFS)/
 	./../tooling/convertmusic.sh $< $(ROMFS)/$@ $(BUILD)/music_meta.h
 
-%.ogg: %.ogg
+%.ogg: %.ogg $(ROMFS)/
 	./../tooling/convertmusic.sh $< $(ROMFS)/$@ $(BUILD)/music_meta.h
 
 # FBX-to-bin with ufbxconv and 
 $(FBX_SENTINEL): $(FBXFILES)
 	@for fbx in $^; do \
+		mkdir -vp $(ROMFS)/; \
 		../tooling/ufbxconv $$fbx $(ROMFS)/; \
 	done
 	@touch $@
@@ -116,7 +121,7 @@ endef
 	smdhtool --create "$(TARGET)" "$(DESC)" "$(AUTHOR)" $(BASEDIR)/icon.png $@
 
 # Binary from elf build rule
-%.3dsx: %.elf
+%.3dsx: %.elf $(ROMFS)/
 	3dsxtool $< --smdh=$(BASEDIR)build/$(TARGET).smdh --romfs=$(ROMFS)/ $(_3DSXFLAGS) $@
 
 # Linking rule
