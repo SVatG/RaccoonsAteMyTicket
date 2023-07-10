@@ -8,3 +8,4 @@
 /romfs/*.vbo
 /tooling/ufbxconv
 config.mk
+.vscode
