@@ -661,7 +661,7 @@ void skyboxCubeImmediate(C3D_Tex* texture, float r, vec3_t cp, C3D_Mtx* modelvie
         vshaderSkyboxDvlb = DVLB_ParseFile((u32*)vshader_skybox_shbin, vshader_skybox_shbin_size);
         shaderProgramInit(&shaderProgramSkybox);
         shaderProgramSetVsh(&shaderProgramSkybox, &vshaderSkyboxDvlb->DVLE[0]);
-        C3D_BindProgram(&shaderProgramFlat);
+        C3D_BindProgram(&shaderProgramSkybox);
         shaderProgramSkyboxCompiled = 1;
     }
     C3D_BindProgram(&shaderProgramSkybox);
@@ -679,8 +679,6 @@ void skyboxCubeImmediate(C3D_Tex* texture, float r, vec3_t cp, C3D_Mtx* modelvie
     // Set up shader uniforms
     uLocModelviewSkybox = shaderInstanceGetUniformLocation(shaderProgramSkybox.vertexShader, "modelview");
     uLocProjectionSkybox = shaderInstanceGetUniformLocation(shaderProgramSkybox.vertexShader, "projection");
-    printf("uLocModelviewSkybox: %d\n", uLocModelviewSkybox);
-    printf("uLocModelviewSkybox: %d\n", uLocProjectionSkybox);
     C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, uLocModelviewSkybox, modelview);
     C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, uLocProjectionSkybox, projection);
 

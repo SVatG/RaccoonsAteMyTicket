@@ -194,7 +194,7 @@ void effectIntroRender(C3D_RenderTarget* targetLeft, C3D_RenderTarget* targetRig
 
     // Right eye?
     if(iod > 0.0) {
-        C3D_FrameDrawOn(targetRight);
+        C3D_FrameDrawOn(targetRight); 
         C3D_RenderTargetClear(targetRight, C3D_CLEAR_ALL, 0x00ff00FF, 0); 
         
         // Uniform setup
