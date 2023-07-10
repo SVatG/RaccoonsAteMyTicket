@@ -5,6 +5,5 @@
 extern shaderProgram_s shaderProgram;
 extern shaderProgram_s shaderProgramNormalMapping;
 extern shaderProgram_s shaderProgramBones;
-extern shaderProgram_s shaderProgramSkybox;    
 
 #endif

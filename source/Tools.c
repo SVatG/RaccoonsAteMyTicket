@@ -1,5 +1,6 @@
 #include "Tools.h"
 #include "vshader_flat_shbin.h"
+#include "vshader_skybox_shbin.h"
 #include "Perlin.h"
 
 extern C3D_Tex fade_tex;
@@ -97,10 +98,18 @@ void resetShadeEnv() {
     C3D_TexEnvFunc(env4, C3D_Both, GPU_REPLACE);
 }
 
+// Overlay shader
 static DVLB_s* vshader_flat_dvlb;
 static shaderProgram_s shaderProgramFlat;
 static int shaderProgramFlatCompiled;
 static C3D_Mtx projection;
+
+// Skybox shader
+static DVLB_s* vshaderSkyboxDvlb;
+static shaderProgram_s shaderProgramSkybox;
+static int shaderProgramSkyboxCompiled;
+static int uLocProjectionSkybox;
+static int uLocModelviewSkybox;
 
 void ensureFlatShader() {
     if(shaderProgramFlatCompiled == 0) {
@@ -465,49 +474,6 @@ int32_t loadObject2(int32_t numFaces, const index_trianglepv_t* faces, const ini
     return numFaces * 3;
 }
 
-// Helper function for loading a texture from a t3x file 
-bool loadTex3DS(C3D_Tex* tex, C3D_TexCube* cube, const char* path) {
-    FILE* f = fopen(path, "rb");
-    if (!f) {
-        printf("Texture file not found: %s\n", path);
-        return false;
-    }
-    
-    Tex3DS_Texture t3x = Tex3DS_TextureImportStdio(f, tex, cube, true);
-    fclose(f); 
-    if (!t3x) {
-        printf("Texture load failure on %s, trying spill\n", path);
-        f = fopen(path, "rb");
-        t3x = Tex3DS_TextureImportStdio(f, tex, cube, false);
-        fclose(f); 
-        if (!t3x) {
-            printf("Final texture load failure on %s\n", path);
-            return false; 
-        }
-    }
-    
-    // Delete the t3x object since we don't need it
-    Tex3DS_TextureFree(t3x);
-    return true;
-}
-
-// Helper function for loading a texture from memory
-bool loadTex3DSMem(C3D_Tex* tex, C3D_TexCube* cube, const void* data, size_t size) {
-    Tex3DS_Texture t3x = Tex3DS_TextureImport(data, size, tex, cube, true);
-    if (!t3x) {
-        printf("Texture load failure on memory tex, retrying to spill\n");
-        t3x = Tex3DS_TextureImport(data, size, tex, cube, false);
-        if (!t3x) {
-            printf("Final texture load failure on memory tex\n");
-            return false; 
-        }
-    }
-    
-    // Delete the t3x object since we don't need it
-    Tex3DS_TextureFree(t3x);
-    return true;
-}
-
 void fade() {
     if(fadeVal > 0) {
         C3D_AlphaBlend(GPU_BLEND_ADD, GPU_BLEND_ADD, GPU_SRC_ALPHA, GPU_ONE_MINUS_SRC_ALPHA, GPU_CONSTANT_ALPHA, GPU_ONE_MINUS_CONSTANT_ALPHA);
@@ -635,7 +601,7 @@ void getBoneMat(fbxBasedObject* model, float row, C3D_Mtx* boneMat, int boneNb) 
 
 // Load an FBX file
 // Will load the named object from the file, put the vertices in the vbo and the frames in frames, allocating both appropriately.
-fbxBasedObject loadFBXObject(const char* filename, const char* textureFilename, const char* syncPrefix) {
+fbxBasedObject loadFBXObject(const char* filename, C3D_Tex* texture, const char* syncPrefix) {
     FILE* fp = fopen(filename, "rb");
     if (fp == NULL) {
         fprintf(stderr, "Error: failed to open file for reading.\n");
@@ -669,10 +635,78 @@ fbxBasedObject loadFBXObject(const char* filename, const char* textureFilename, 
     sprintf(trackName, "%s.frame", syncPrefix);
     object.frameSync = sync_get_track(rocket, trackName);
 
-    // Load texture into VRAM if requested
-    if(textureFilename != NULL) {
-        loadTexture(&object.tex, NULL, textureFilename);
-    }
+    // Store texture
+    object.tex = texture;
     
     return object;
+}
+
+void freeFBXObject(fbxBasedObject* object) {
+    linearFree(object->vbo);
+    free(object->animFrames);
+}
+
+inline void skyboxQuadImmediate(vec3_t a, vec3_t b, vec3_t c, vec3_t d) {
+    C3D_ImmSendAttrib(a.x, a.y, a.z, 0.0f);
+    C3D_ImmSendAttrib(b.x, b.y, b.z, 0.0f);
+    C3D_ImmSendAttrib(c.x, c.y, c.z, 0.0f);
+    C3D_ImmSendAttrib(a.x, a.y, a.z, 0.0f);
+    C3D_ImmSendAttrib(c.x, c.y, c.z, 0.0f);
+    C3D_ImmSendAttrib(d.x, d.y, d.z, 0.0f);
+}
+
+void skyboxCubeImmediate(C3D_Tex* texture, float r, vec3_t cp, C3D_Mtx* modelview, C3D_Mtx* projection) {
+    // Ensure skybox shader is compiled and bound
+    if(shaderProgramSkyboxCompiled == 0) {
+        vshaderSkyboxDvlb = DVLB_ParseFile((u32*)vshader_skybox_shbin, vshader_skybox_shbin_size);
+        shaderProgramInit(&shaderProgramSkybox);
+        shaderProgramSetVsh(&shaderProgramSkybox, &vshaderSkyboxDvlb->DVLE[0]);
+        C3D_BindProgram(&shaderProgramFlat);
+        shaderProgramSkyboxCompiled = 1;
+    }
+    C3D_BindProgram(&shaderProgramSkybox);
+    
+    // Clear shade env and set up straight passthrough
+    resetShadeEnv();
+    C3D_TexEnv* env = C3D_GetTexEnv(0);
+    C3D_TexEnvInit(env);
+    C3D_TexEnvSrc(env, C3D_Both, GPU_TEXTURE0, 0, 0);
+    C3D_TexEnvFunc(env, C3D_Both, GPU_REPLACE);
+    C3D_TexBind(0, texture);
+    C3D_TexSetFilter(texture, GPU_LINEAR, GPU_NEAREST);
+    C3D_TexSetWrap(texture, GPU_CLAMP_TO_EDGE, GPU_CLAMP_TO_EDGE);
+
+    // Set up shader uniforms
+    uLocModelviewSkybox = shaderInstanceGetUniformLocation(shaderProgramSkybox.vertexShader, "modelview");
+    uLocProjectionSkybox = shaderInstanceGetUniformLocation(shaderProgramSkybox.vertexShader, "projection");
+    printf("uLocModelviewSkybox: %d\n", uLocModelviewSkybox);
+    printf("uLocModelviewSkybox: %d\n", uLocProjectionSkybox);
+    C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, uLocModelviewSkybox, modelview);
+    C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, uLocProjectionSkybox, projection);
+
+    // Set up attributes for single attribute 3 floats
+    C3D_AttrInfo* attrInfo = C3D_GetAttrInfo();
+    AttrInfo_Init(attrInfo);
+    AttrInfo_AddLoader(attrInfo, 0, GPU_FLOAT, 3);
+
+    // Cube corners
+    vec3_t a = vec3add(cp, vec3(-r, -r, -r));
+    vec3_t b = vec3add(cp, vec3( r, -r, -r));
+    vec3_t c = vec3add(cp, vec3( r, -r,  r));
+    vec3_t d = vec3add(cp, vec3(-r, -r,  r));
+    vec3_t e = vec3add(cp, vec3(-r,  r, -r));
+    vec3_t f = vec3add(cp, vec3( r,  r, -r));
+    vec3_t g = vec3add(cp, vec3( r,  r,  r));
+    vec3_t h = vec3add(cp, vec3(-r,  r,  r));
+    
+    // Now build the cube, immediate mode style
+    C3D_CullFace(GPU_CULL_NONE);
+    C3D_ImmDrawBegin(GPU_TRIANGLES);    
+        skyboxQuadImmediate(a, b, c, d);
+        skyboxQuadImmediate(d, c, g, h);
+        skyboxQuadImmediate(h, g, f, e);
+        skyboxQuadImmediate(e, f, b, a);
+        skyboxQuadImmediate(b, f, g, c);
+        skyboxQuadImmediate(e, a, d, h);
+    C3D_ImmDrawEnd();
 }

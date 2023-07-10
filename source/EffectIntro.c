@@ -25,6 +25,9 @@ static C3D_LightLut lutShittyFresnel;
 // Boooones
 static int uLocBone[21];
 
+C3D_Tex texIntro;
+C3D_Tex texSky;
+C3D_TexCube texSkyCube;
 fbxBasedObject modelTextA;
 fbxBasedObject modelTextB;
 fbxBasedObject modelTextC;
@@ -48,12 +51,14 @@ void effectIntroInit() {
     }
 
     // Load a model
-    modelTextA = loadFBXObject("romfs:/obj_introtext_svatg.vbo", NULL, "intro.text");
-    modelTextB = loadFBXObject("romfs:/obj_introtext_inviteyouto.vbo", NULL, "intro.text");
-    modelTextC = loadFBXObject("romfs:/obj_introtext_nordlicht2023.vbo", NULL, "intro.text");
-    camProxy = loadFBXObject("romfs:/obj_introtext_cam_proxy.vbo", NULL, "intro.cam");
-    modelEnv = loadFBXObject("romfs:/obj_introtext_env.vbo", NULL, "intro.env");
-    modelTrain = loadFBXObject("romfs:/obj_introtext_train.vbo", NULL, "intro.train");
+    loadTexture(&texIntro, NULL, "romfs:/tex_intro.bin");
+    loadTexture(&texSky, &texSkyCube, "romfs:/sky_cube.bin");
+    modelTextA = loadFBXObject("romfs:/obj_introtext_svatg.vbo", &texIntro, "intro.text");
+    modelTextB = loadFBXObject("romfs:/obj_introtext_inviteyouto.vbo", &texIntro, "intro.text");
+    modelTextC = loadFBXObject("romfs:/obj_introtext_nordlicht2023.vbo", &texIntro, "intro.text");
+    camProxy = loadFBXObject("romfs:/obj_introtext_cam_proxy.vbo", &texIntro, "intro.cam");
+    modelEnv = loadFBXObject("romfs:/obj_introtext_env.vbo", &texIntro, "intro.env");
+    modelTrain = loadFBXObject("romfs:/obj_introtext_train.vbo", &texIntro, "intro.train");
 }
 
 // TODO: Split out shade setup
@@ -79,7 +84,7 @@ void drawModel(fbxBasedObject* model, float row) {
     BufInfo_Add(bufInfo, (void*)model->vbo, sizeof(vertex_rigged), 5, 0x43210);
 
     // Bind texture
-    C3D_TexBind(0, &model->tex);    
+    C3D_TexBind(0, model->tex);    
 
     // Set up lighting
     C3D_LightEnvInit(&lightEnv);
@@ -89,7 +94,7 @@ void drawModel(fbxBasedObject* model, float row) {
     C3D_LightEnvLut(&lightEnv, GPU_LUT_D0, GPU_LUTINPUT_LN, false, &lutPhong);
     
     // Add funny edge lighting that makes 3D pop
-    float lightStrengthFresnel = 1.0;
+    float lightStrengthFresnel = 0.5;
     LightLut_FromFunc(&lutShittyFresnel, badFresnel, lightStrengthFresnel, false);
     C3D_LightEnvLut(&lightEnv, GPU_LUT_FR, GPU_LUTINPUT_NV, false, &lutShittyFresnel);
     C3D_LightEnvFresnel(&lightEnv, GPU_PRI_SEC_ALPHA_FRESNEL);
@@ -97,7 +102,7 @@ void drawModel(fbxBasedObject* model, float row) {
     // Basic shading with diffuse + specular
     C3D_FVec lightVec = FVec4_New(0.0, 0.0, 0.0, 1.0);
     C3D_LightInit(&light, &lightEnv);
-    C3D_LightColor(&light, 1.0, 1.0, 1.0);
+    C3D_LightColor(&light, 50.0, 50.0, 50.0);
     C3D_LightPosition(&light, &lightVec);
 
     C3D_Material lightMaterial = {
@@ -130,8 +135,7 @@ void drawModel(fbxBasedObject* model, float row) {
 
     // GPU state for normal drawing with transparency 
     C3D_DepthTest(true, GPU_GEQUAL, GPU_WRITE_ALL);
-    //C3D_CullFace(GPU_CULL_BACK_CCW);
-    C3D_CullFace(GPU_CULL_NONE); 
+    C3D_CullFace(GPU_CULL_BACK_CCW);
     C3D_AlphaBlend(GPU_BLEND_ADD, GPU_BLEND_ADD, GPU_SRC_ALPHA, GPU_ONE_MINUS_SRC_ALPHA, GPU_SRC_ALPHA, GPU_ONE_MINUS_SRC_ALPHA);
  
     // Actual drawcall
@@ -155,6 +159,11 @@ void effectIntroRender(C3D_RenderTarget* targetLeft, C3D_RenderTarget* targetRig
 
     C3D_Mtx modelview;
     Mtx_Multiply(&modelview, &baseview, &camMat);
+
+    C3D_Mtx skyview;
+    Mtx_Multiply(&skyview, &baseview, &camMat);
+    Mtx_RotateZ(&skyview, row * 0.05, true);
+
     //Mtx_Scale(&modelview, 0.01, 0.01, 0.01);
 
 
@@ -163,14 +172,14 @@ void effectIntroRender(C3D_RenderTarget* targetLeft, C3D_RenderTarget* targetRig
     //Mtx_RotateX(&modelview, M_PI, true);
     //Mtx_RotateY(&modelview, M_PI / 2, true);
 
-    C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, uLocModelview,  &modelview);
- 
-    // Left eye 
+     // Left eye 
     C3D_FrameDrawOn(targetLeft);  
     C3D_RenderTargetClear(targetLeft, C3D_CLEAR_ALL, 0xff0000FF, 0);
     
+    // Uniform setup
     Mtx_PerspStereoTilt(&projection, 20.0f*M_PI/180.0f, 400.0f/240.0f, 0.01f, 6000.0f, -iod,  7.0f, false);
     C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, uLocProjection, &projection);
+    C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, uLocModelview,  &modelview);
 
     // Dispatch drawcalls
     drawModel(&modelTextA, row);
@@ -178,6 +187,7 @@ void effectIntroRender(C3D_RenderTarget* targetLeft, C3D_RenderTarget* targetRig
     drawModel(&modelTextC, row);
     drawModel(&modelEnv, row);
     drawModel(&modelTrain, row);
+    skyboxCubeImmediate(&texSky, 1000.0f, vec3(0.0f, 0.0f, 0.0f), &skyview, &projection); 
 
     // Do fading
     //fade();
@@ -187,8 +197,10 @@ void effectIntroRender(C3D_RenderTarget* targetLeft, C3D_RenderTarget* targetRig
         C3D_FrameDrawOn(targetRight);
         C3D_RenderTargetClear(targetRight, C3D_CLEAR_ALL, 0x00ff00FF, 0); 
         
+        // Uniform setup
         Mtx_PerspStereoTilt(&projection, 20.0f*M_PI/180.0f, 400.0f/240.0f, 0.01f, 6000.0f, iod, 7.0f, false);
         C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, uLocProjection, &projection);
+        C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, uLocModelview,  &modelview);
 
         // Dispatch drawcalls
         drawModel(&modelTextA, row);
@@ -197,6 +209,8 @@ void effectIntroRender(C3D_RenderTarget* targetLeft, C3D_RenderTarget* targetRig
         drawModel(&modelEnv, row);
         drawModel(&modelTrain, row);
         
+        skyboxCubeImmediate(&texSky, 1000.0f, vec3(0.0f, 0.0f, 0.0f), &skyview, &projection); 
+
         // Perform fading
         //fade();
     } 
@@ -207,5 +221,12 @@ void effectIntroRender(C3D_RenderTarget* targetLeft, C3D_RenderTarget* targetRig
 }
 
 void effectIntroExit() {
-    // TODO free ressources here okay
+    freeFBXObject(&modelTextA); 
+    freeFBXObject(&modelTextB);
+    freeFBXObject(&modelTextC);
+    freeFBXObject(&modelEnv);
+    freeFBXObject(&modelTrain);
+    freeFBXObject(&camProxy);
+    C3D_TexDelete(&texIntro);
+    C3D_TexDelete(&texSky);
 }

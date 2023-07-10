@@ -253,7 +253,7 @@ int main() {
     ov_clear(&vorbis);
     fclose(fp);
 
-    waitForA("Loaded vorbis, press A -> B to continue");
+    //waitForA("Loaded vorbis, press A -> B to continue");
 
     printf("Demobeginn imminent.\n");
 

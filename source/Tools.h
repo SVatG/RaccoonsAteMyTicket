@@ -107,7 +107,7 @@ typedef struct fbxBasedObject {
 
 #ifndef TOOLS_BASICS_ONLY
     // Texture
-    C3D_Tex tex;
+    C3D_Tex* tex;
 #endif    
  } fbxBasedObject;
 #define FBX_FRAME_IDX(frame, bone, element, boneCount) (((frame) * ((boneCount) * 12) + (bone) * 12 + (element)))
@@ -355,16 +355,16 @@ extern void startPerfCounter(int idx);
 extern void stopPerfCounter(int idx);
 extern float readPerfCounter(int idx);
 
-extern bool loadTex3DS(C3D_Tex* tex, C3D_TexCube* cube, const char* path);
-extern bool loadTex3DSMem(C3D_Tex* tex, C3D_TexCube* cube, const void* data, size_t size);
-
 extern u8* readFileMem(const char* fileName, u32* fileSize, bool linear);
 extern void waitForA(const char* msg);
 
 void loadTexture(C3D_Tex* tex, C3D_TexCube* cube, const char* path);
-fbxBasedObject loadFBXObject(const char* filename, const char* textureFilename, const char* syncPrefix);
+fbxBasedObject loadFBXObject(const char* filename, C3D_Tex* tex, const char* syncPrefix);
 void setBonesFromSync(fbxBasedObject* model, int* boneLocs, float row);
 void getBoneMat(fbxBasedObject* model, float row, C3D_Mtx* boneMat, int boneNb);
+void freeFBXObject(fbxBasedObject* object);
+
+void skyboxCubeImmediate(C3D_Tex* texture, float r, vec3_t cp, C3D_Mtx* modelview, C3D_Mtx* projection);
 
 #endif
 #endif
