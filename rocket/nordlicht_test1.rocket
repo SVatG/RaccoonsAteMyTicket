@@ -1,35 +1,42 @@
 <sync rows="512">
 	<tracks>
 		<track name="global.fade"/>
-		<track name="global.effect"/>
+		<track name="global.effect">
+			<key interpolation="0" row="0" value="0"/>
+			<key interpolation="0" row="240" value="1"/>
+		</track>
 		<track name="global.image"/>
 		<track name="intro.text.frame">
-			<key row="0" value="0" interpolation="0"/>
-			<key row="40" value="2" interpolation="0"/>
-			<key row="88" value="4" interpolation="0"/>
-			<key row="136" value="6" interpolation="0"/>
+			<key interpolation="0" row="0" value="0"/>
+			<key interpolation="0" row="40" value="2"/>
+			<key interpolation="0" row="88" value="4"/>
+			<key interpolation="0" row="136" value="6"/>
 		</track>
 		<track name="intro.train.frame">
-			<key row="0" value="0" interpolation="0"/>
-			<key row="24" value="0" interpolation="1"/>
-			<key row="56" value="73" interpolation="0"/>
-			<key row="72" value="0" interpolation="1"/>
-			<key row="104" value="73" interpolation="0"/>
-			<key row="120" value="0" interpolation="1"/>
-			<key row="152" value="73" interpolation="0"/>
+			<key interpolation="0" row="0" value="0"/>
+			<key interpolation="1" row="24" value="0"/>
+			<key interpolation="0" row="56" value="73"/>
+			<key interpolation="1" row="72" value="0"/>
+			<key interpolation="0" row="104" value="73"/>
+			<key interpolation="1" row="120" value="0"/>
+			<key interpolation="0" row="152" value="73"/>
 		</track>
 		<track name="intro.cam.frame">
-			<key row="0" value="0" interpolation="1"/>
-			<key row="40" value="10" interpolation="0"/>
-			<key row="80" value="10" interpolation="2"/>
-			<key row="88" value="20" interpolation="0"/>
-			<key row="128" value="20" interpolation="2"/>
-			<key row="139" value="40" interpolation="0"/>
-			<key row="160" value="40" interpolation="1"/>
-			<key row="208" value="72" interpolation="0"/>
+			<key interpolation="1" row="0" value="0"/>
+			<key interpolation="0" row="40" value="10"/>
+			<key interpolation="2" row="80" value="10"/>
+			<key interpolation="0" row="88" value="20"/>
+			<key interpolation="2" row="128" value="20"/>
+			<key interpolation="0" row="139" value="40"/>
+			<key interpolation="1" row="160" value="40"/>
+			<key interpolation="0" row="208" value="72"/>
 		</track>
 		<track name="intro.env.frame">
-			<key row="0" value="0" interpolation="0"/>
+			<key interpolation="0" row="0" value="0"/>
+		</track>
+		<track name="billboards.frame.frame">
+			<key interpolation="1" row="240" value="0"/>
+			<key interpolation="0" row="511" value="63"/>
 		</track>
 	</tracks>
 	<bookmarks/>

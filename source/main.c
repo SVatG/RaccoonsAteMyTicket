@@ -194,6 +194,10 @@ extern void effectIntroInit();
 extern void effectIntroRender(C3D_RenderTarget* targetLeft, C3D_RenderTarget* targetRight, float row, float iod);
 extern void effectIntroExit();
 
+extern void effectBillboardsInit();
+extern void effectBillboardsRender(C3D_RenderTarget* targetLeft, C3D_RenderTarget* targetRight, float row, float iod);
+extern void effectBillboardsExit();
+
 int main() {
     bool DUMPFRAMES = false;
     bool DUMPFRAMES_3D = false;
@@ -209,9 +213,9 @@ int main() {
     effect_list[0].exit = effectIntroExit;
     
     // Actually the effects are just kind of broken generally. TODO: Fix
-    effect_list[1].init = effectIntroInit;
-    effect_list[1].render = effectIntroRender;
-    effect_list[1].exit = effectIntroExit;
+    effect_list[1].init = effectBillboardsInit;
+    effect_list[1].render = effectBillboardsRender;
+    effect_list[1].exit = effectBillboardsExit;
 
     // Initialize graphics
     gfxInit(GSP_RGBA8_OES, GSP_BGR8_OES, false);

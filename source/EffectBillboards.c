@@ -25,17 +25,15 @@ static C3D_LightLut lutShittyFresnel;
 // Boooones
 static int uLocBone[21];
 
-static C3D_Tex texIntro;
+static C3D_Tex texBase;
 static C3D_Tex texSky;
 static C3D_TexCube texSkyCube;
-static fbxBasedObject modelTextA;
-static fbxBasedObject modelTextB;
-static fbxBasedObject modelTextC;
-static fbxBasedObject modelEnv;
+static fbxBasedObject modelBillboard;
 static fbxBasedObject modelTrain;
+static fbxBasedObject modelFloor;
 static fbxBasedObject camProxy;
 
-void effectIntroInit() {
+void effectBillboardsInit() {
     // Prep general info: Shader (precompiled in main for important ceremonial reasons)
     C3D_BindProgram(&shaderProgramBones);
 
@@ -51,14 +49,12 @@ void effectIntroInit() {
     }
 
     // Load a model
-    loadTexture(&texIntro, NULL, "romfs:/tex_intro.bin");
+    loadTexture(&texBase, NULL, "romfs:/tex_3ds_test.bin");
     loadTexture(&texSky, &texSkyCube, "romfs:/sky_cube.bin");
-    modelTextA = loadFBXObject("romfs:/obj_introtext_svatg.vbo", &texIntro, "intro.text");
-    modelTextB = loadFBXObject("romfs:/obj_introtext_inviteyouto.vbo", &texIntro, "intro.text");
-    modelTextC = loadFBXObject("romfs:/obj_introtext_nordlicht2023.vbo", &texIntro, "intro.text");
-    camProxy = loadFBXObject("romfs:/obj_introtext_cam_proxy.vbo", &texIntro, "intro.cam");
-    modelEnv = loadFBXObject("romfs:/obj_introtext_env.vbo", &texIntro, "intro.env");
-    modelTrain = loadFBXObject("romfs:/obj_introtext_train.vbo", &texIntro, "intro.train");
+    modelBillboard = loadFBXObject("romfs:/obj_billboards_billboard.vbo", &texBase, "billboards.frame");
+    modelTrain = loadFBXObject("romfs:/obj_billboards_train.vbo", &texBase, "billboards.frame");
+    modelFloor = loadFBXObject("romfs:/obj_billboards_floor.vbo", &texBase, "billboards.frame");
+    camProxy = loadFBXObject("romfs:/obj_billboards_cam_proxy.vbo", &texBase, "billboards.frame");
 }
 
 // TODO: Split out shade setup
@@ -142,16 +138,17 @@ static void drawModel(fbxBasedObject* model, float row) {
     C3D_DrawArrays(GPU_TRIANGLES, 0, model->vertCount);
 }
 
-void effectIntroRender(C3D_RenderTarget* targetLeft, C3D_RenderTarget* targetRight, float row, float iod) {
+void effectBillboardsRender(C3D_RenderTarget* targetLeft, C3D_RenderTarget* targetRight, float row, float iod) {
     // Frame starts (TODO pull out?)   
     C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
  
     // Send modelview 
     C3D_Mtx baseview;
     Mtx_Identity(&baseview);
-    Mtx_RotateZ(&baseview, M_PI, true);
+    /*Mtx_RotateZ(&baseview, M_PI, true);
     Mtx_RotateX(&baseview, -M_PI / 2, true);
-    Mtx_RotateY(&baseview, M_PI, true);
+    Mtx_RotateY(&baseview, M_PI, true);*/
+    Mtx_Translate(&baseview, 0.0, -10.0, -200.0, true);
   
     C3D_Mtx camMat;
     getBoneMat(&camProxy, row, &camMat, 3);
@@ -164,14 +161,6 @@ void effectIntroRender(C3D_RenderTarget* targetLeft, C3D_RenderTarget* targetRig
     Mtx_Multiply(&skyview, &baseview, &camMat);
     Mtx_RotateZ(&skyview, row * 0.05, true);
 
-    //Mtx_Scale(&modelview, 0.01, 0.01, 0.01);
-
-
-    //Mtx_Identity(&modelview);
-    //Mtx_Translate(&modelview, 0.0, -1.0, -40.0, true);
-    //Mtx_RotateX(&modelview, M_PI, true);
-    //Mtx_RotateY(&modelview, M_PI / 2, true);
-
      // Left eye 
     C3D_FrameDrawOn(targetLeft);  
     C3D_RenderTargetClear(targetLeft, C3D_CLEAR_ALL, 0xff0000FF, 0);
@@ -182,10 +171,8 @@ void effectIntroRender(C3D_RenderTarget* targetLeft, C3D_RenderTarget* targetRig
     C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, uLocModelview,  &modelview);
 
     // Dispatch drawcalls
-    drawModel(&modelTextA, row);
-    drawModel(&modelTextB, row);
-    drawModel(&modelTextC, row);
-    drawModel(&modelEnv, row);
+    drawModel(&modelBillboard, row);
+    drawModel(&modelFloor, row);
     drawModel(&modelTrain, row);
     skyboxCubeImmediate(&texSky, 1000.0f, vec3(0.0f, 0.0f, 0.0f), &skyview, &projection); 
 
@@ -203,12 +190,9 @@ void effectIntroRender(C3D_RenderTarget* targetLeft, C3D_RenderTarget* targetRig
         C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, uLocModelview,  &modelview);
 
         // Dispatch drawcalls
-        drawModel(&modelTextA, row);
-        drawModel(&modelTextB, row);
-        drawModel(&modelTextC, row);
-        drawModel(&modelEnv, row);
+        drawModel(&modelBillboard, row);
+        drawModel(&modelFloor, row);
         drawModel(&modelTrain, row);
-        
         skyboxCubeImmediate(&texSky, 1000.0f, vec3(0.0f, 0.0f, 0.0f), &skyview, &projection); 
 
         // Perform fading
@@ -220,13 +204,11 @@ void effectIntroRender(C3D_RenderTarget* targetLeft, C3D_RenderTarget* targetRig
 
 }
 
-void effectIntroExit() {
-    freeFBXObject(&modelTextA); 
-    freeFBXObject(&modelTextB);
-    freeFBXObject(&modelTextC);
-    freeFBXObject(&modelEnv);
+void effectBillboardsExit() {
+    freeFBXObject(&modelBillboard);
     freeFBXObject(&modelTrain);
+    freeFBXObject(&modelFloor);
     freeFBXObject(&camProxy);
-    C3D_TexDelete(&texIntro);
+    C3D_TexDelete(&texBase);
     C3D_TexDelete(&texSky);
 }
