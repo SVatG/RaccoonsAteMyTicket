@@ -171,10 +171,14 @@ fbxBasedObject loadFBXObject(const char* filename, const char* objectName) {
                 objectNew.animFrames = (float*)malloc(sizeof(float) * frameCount * boneCount * 12);
 
                 // Copy every frame
+                bool havePrinted = false;
                 for(size_t frame = 0; frame < frameCount; frame++) {
                     // Get every bones transform for the frame
                     for(size_t boneIdx = 0; boneIdx < boneCount; boneIdx++) {
                         ufbx_skin_cluster* cluster = skin->clusters.data[boneIdx];
+                        if(!havePrinted) {
+                            printf("  * bone %ld: %s\n", boneIdx, cluster->bone_node->name.data);
+                        }
                         ufbx_node* bone = cluster->bone_node;
                         float frameTime = anim_stack->anim.time_begin + frame * frameDur;
                         ufbx_transform transform = ufbx_evaluate_transform(&anim_stack->anim, bone, frameTime);
@@ -276,6 +280,7 @@ fbxBasedObject loadFBXObject(const char* filename, const char* objectName) {
                         );
                         #endif                        
                     }
+                    havePrinted = true;
                 }
             }
             else {

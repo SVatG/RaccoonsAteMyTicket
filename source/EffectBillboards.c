@@ -145,13 +145,17 @@ void effectBillboardsRender(C3D_RenderTarget* targetLeft, C3D_RenderTarget* targ
     // Send modelview 
     C3D_Mtx baseview;
     Mtx_Identity(&baseview);
-    /*Mtx_RotateZ(&baseview, M_PI, true);
+    /*Mtx_RotateZ(&baseview, -M_PI / 2.0, true);
+    Mtx_RotateY(&baseview, 3.0 * M_PI / 2.0, true);
+    /*Mtx_RotateY(&baseview, M_PI, true);*/
+    Mtx_RotateZ(&baseview, M_PI, true);
     Mtx_RotateX(&baseview, -M_PI / 2, true);
-    Mtx_RotateY(&baseview, M_PI, true);*/
-    Mtx_Translate(&baseview, 0.0, -10.0, -200.0, true);
+    Mtx_RotateY(&baseview, M_PI, true);
+  
+    Mtx_Translate(&baseview, 0.0, 0.0, 0.0, true);
   
     C3D_Mtx camMat;
-    getBoneMat(&camProxy, row, &camMat, 3);
+    getBoneMat(&camProxy, row, &camMat, 0);
     Mtx_Inverse(&camMat);
 
     C3D_Mtx modelview;
