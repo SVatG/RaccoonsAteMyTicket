@@ -6,7 +6,7 @@ all: upload
 
 clean:
 	$(MAKE) -C build clean
-	rm tooling/ufbxconv
+	rm -fr tooling/ufbxconv
 
 tooling/ufbxconv:
 	$(MAKE) -C tooling
