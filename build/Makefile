@@ -46,8 +46,8 @@ LDFLAGS := -specs=3dsx.specs -g $(ARCH) -Wl,-Map,$(notdir $*.map) \
 CFILES := $(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.c)))
 PICAFILES := $(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/Shaders/*.v.pica)))
 BINFILES := $(foreach dir,$(DATA),$(notdir $(wildcard $(dir)/*.*)))
-PNGFILES := $(foreach dir,$(ASSETS),$(notdir $(wildcard $(dir)/*.png)))
-FBXFILES := $(foreach dir,$(ASSETS),$(notdir $(wildcard $(dir)/*.fbx)))
+PNGFILES := $(foreach dir,$(ASSETS),$(notdir $(wildcard $(dir)/tex_*.png)))
+FBXFILES := $(foreach dir,$(ASSETS),$(notdir $(wildcard $(dir)/obj_*.fbx)))
 
 # Output files
 OUTPUT := $(CURDIR)/$(TARGET)
