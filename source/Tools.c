@@ -130,7 +130,7 @@ void ensureFlatShader() {
     AttrInfo_AddLoader(attrInfo, 1, GPU_FLOAT, 2);
 }
 
-void fullscreenQuad(C3D_Tex texture, float shift, float zoom) { 
+void fullscreenQuad(C3D_Tex texture, float shift, float zoom) {
     ensureFlatShader();
     
     C3D_TexSetFilter(&texture, GPU_LINEAR, GPU_NEAREST);
@@ -138,33 +138,15 @@ void fullscreenQuad(C3D_Tex texture, float shift, float zoom) {
     
     resetShadeEnv();
     
-    C3D_TexEnv* env = C3D_GetTexEnv(0);
-    u8 fadeValInt = fadeVal * 255.0;
-    C3D_TexEnvInit(env);
-    // hack
-    if(zoom == 1.0) {
-        C3D_TexEnvColor(env, 0x00FFFFFF + (fadeValInt << 24));
-    }
-    else {
-        C3D_TexEnvColor(env, 0xFFFFFFFF);
-    }
-    C3D_TexEnvSrc(env, C3D_Both, GPU_TEXTURE0, GPU_CONSTANT, 0);
-    C3D_TexEnvFunc(env, C3D_Both, GPU_MODULATE);
-
     shift = shift / 400.0;
     float textureLeft = (0.0 + shift) * zoom;
     float textureRight = ((400.0 / 512.0) + shift) * zoom;
     float textureTop = ((1.0 - (float)SCREEN_HEIGHT / (float)512.0)) * zoom;
     float textureBottom = 1.0 * zoom;
-   
+    
     // Turn off depth test as well as write
-    if(zoom == 1.0) {  // hack
-        C3D_DepthTest(false, GPU_GEQUAL, GPU_WRITE_COLOR);
-    }
-    else {
-        C3D_DepthTest(true, GPU_GEQUAL, GPU_WRITE_COLOR);
-    }
-   
+    C3D_DepthTest(false, GPU_GEQUAL, GPU_WRITE_COLOR);
+    
     // Draw a textured quad directly
     C3D_ImmDrawBegin(GPU_TRIANGLES);
         
@@ -476,7 +458,6 @@ int32_t loadObject2(int32_t numFaces, const index_trianglepv_t* faces, const ini
 
 void fade() {
     if(fadeVal > 0) {
-        C3D_AlphaBlend(GPU_BLEND_ADD, GPU_BLEND_ADD, GPU_SRC_ALPHA, GPU_ONE_MINUS_SRC_ALPHA, GPU_CONSTANT_ALPHA, GPU_ONE_MINUS_CONSTANT_ALPHA);
         fullscreenQuad(fade_tex, 0.0, 1.0);
     }
 }

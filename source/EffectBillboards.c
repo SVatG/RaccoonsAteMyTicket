@@ -181,7 +181,7 @@ void effectBillboardsRender(C3D_RenderTarget* targetLeft, C3D_RenderTarget* targ
     skyboxCubeImmediate(&texSky, 1000.0f, vec3(0.0f, 0.0f, 0.0f), &skyview, &projection); 
 
     // Do fading
-    //fade();
+    fade();
 
     // Right eye?
     if(iod > 0.0) {
@@ -200,7 +200,7 @@ void effectBillboardsRender(C3D_RenderTarget* targetLeft, C3D_RenderTarget* targ
         skyboxCubeImmediate(&texSky, 1000.0f, vec3(0.0f, 0.0f, 0.0f), &skyview, &projection); 
 
         // Perform fading
-        //fade();
+        fade();
     } 
 
     // Swap

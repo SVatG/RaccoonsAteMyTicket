@@ -383,11 +383,13 @@ int main() {
 
         // Fading update
         fadeVal = sync_get_val(sync_fade, row);
-
-        //printf("ppf\n");
-        hidScanInput();
+        FillBitmap(&fadeBitmap, RGBAf(0.0, 0.0, 0.0, fadeVal));
+        GSPGPU_FlushDataCache(fadePixels, 64 * 64 * sizeof(Pixel));
+        GX_DisplayTransfer((u32*)fadePixels, GX_BUFFER_DIM(64, 64), (u32*)fade_tex.data, GX_BUFFER_DIM(64, 64), TEXTURE_TRANSFER_FLAGS);
+        gspWaitForPPF();
         
         // Respond to user input
+        hidScanInput();
         u32 kDown = hidKeysDown();
         if (kDown & KEY_START) {
             break; // break in order to return to hbmenu
