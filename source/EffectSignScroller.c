@@ -36,7 +36,7 @@ static const struct sync_track* sync_cpyr[3];
 static const struct sync_track* sync_cpos[3];
 static const struct sync_track* sync_zoom;
 
-extern Font London40RegularMono; 
+extern Font London40Regular; 
 
 static Bitmap textmap;
 static Pixel* textpx;
@@ -45,8 +45,8 @@ static C3D_Tex texScroll;
 static void fontRender(int x, int y, const char* str) {
     Pixel col = 0xffff00ffu; // yellow, hopefully
     ClearBitmap(&textmap);
-    DrawSimpleString(&textmap, &London40RegularMono, x, y, col, str);
-    /*DrawSimpleString(&textmap, &London40RegularMono.rle.font, x, y, col, str);*/
+    CompositeSimpleString(&textmap, &London40Regular, x, y, col, SourceOverCompositionMode, str);
+    /*DrawSimpleString(&textmap, &London40Regular, x, y, col, str);*/
     /*DrawCircle(&textmap, 128, 128, 30, col);*/
 }
 static void fontFlushToGPU(void) {
