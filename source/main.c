@@ -198,13 +198,17 @@ extern void effectBillboardsInit();
 extern void effectBillboardsRender(C3D_RenderTarget* targetLeft, C3D_RenderTarget* targetRight, float row, float iod);
 extern void effectBillboardsExit();
 
+extern void effectSignScrollerInit();
+extern void effectSignScrollerRender(C3D_RenderTarget* targetLeft, C3D_RenderTarget* targetRight, float row, float iod);
+extern void effectSignScrollerExit();
+
 int main() {
     bool DUMPFRAMES = false;
     bool DUMPFRAMES_3D = false;
     float DUMPFRAMES_3D_SEP = 0.4;
 
     // Set up effect list. Sequencing is done in Rocket
-    #define EFFECT_MAX 2
+    #define EFFECT_MAX 3
     effect effect_list[EFFECT_MAX];
     
     // The tunnel-actually-platform effect currently will NOT exist cleanly. (TODO FIXME? will be replaced anyways)
@@ -216,6 +220,10 @@ int main() {
     effect_list[1].init = effectBillboardsInit;
     effect_list[1].render = effectBillboardsRender;
     effect_list[1].exit = effectBillboardsExit;
+
+    effect_list[2].init = effectSignScrollerInit;
+    effect_list[2].render = effectSignScrollerRender;
+    effect_list[2].exit = effectSignScrollerExit;
 
     // Initialize graphics
     gfxInit(GSP_RGBA8_OES, GSP_BGR8_OES, false);
