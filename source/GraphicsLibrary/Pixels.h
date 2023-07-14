@@ -29,13 +29,23 @@
 
 #elif defined(RGB8Pixels)
 #include "Pixels/RGB8.h"
+#elif defined(IndexedPixels)
+#include "Pixels/Indexed.h"
+
+#else // Default to BGRA32 pixels.
+#include "Pixels/BGRA32.h"
 
 #endif
 
 #define RGBf(r,g,b) RGB((r)*255,(g)*255,(b)*255)
 #define RGBAf(r,g,b,a) RGBA((r)*255,(g)*255,(b)*255,(a)*255)
+#define RGBHex(hex) RGB(((hex)>>16)&0xff,((hex)>>8)&0xff,(hex)&0xff)
 #define White(l) RGB(l,l,l)
 #define Whitef(l) Grey(l*255)
 #define Grey(v) White(v)
+
+#define ExtractRedf(c) (ExtractRed(c) / 255.f)
+#define ExtractGreenf(c) (ExtractGreen(c) / 255.f)
+#define ExtractBluef(c) (ExtractBlue(c) / 255.f)
 
 #endif

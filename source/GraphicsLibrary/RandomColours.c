@@ -1,6 +1,6 @@
 #include "RandomColours.h"
 
-uint32_t RandomInteger();
+uint32_t RandomInteger(void);
 
 Pixel RandomColour()
 {
@@ -18,7 +18,7 @@ Pixel RandomBrightColour()
 	{
 		default:
 		case 0: return UnclampedRGB(0xff,c1,c2);
-		case 1: return UnclampedRGB(c2,0xff,c2);
+		case 1: return UnclampedRGB(c2,0xff,c1);
 		case 2: return UnclampedRGB(c1,c2,0xff);
 	}
 }

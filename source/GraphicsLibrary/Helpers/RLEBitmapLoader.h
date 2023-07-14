@@ -4,12 +4,12 @@
 #include "RLEBitmapAllocator.h"
 #include "BitmapLoader.h"
 
-static RLEBitmap *AllocateRLEBitmapWithContentsOfPNGFile(const char *filename)
+static RLEBitmap *AllocateRLEBitmapFromContentsOfPNGFile(const char *filename)
 {
 	Bitmap *bitmap=AllocateBitmapWithContentsOfPNGFile(filename);
 	if(!bitmap) return NULL;
 
-	RLEBitmap *self=AllocateRLEBitmapWithBitmap(bitmap);
+	RLEBitmap *self=AllocateRLEBitmapFromBitmap(bitmap);
 
 	FreeBitmap(bitmap);
 

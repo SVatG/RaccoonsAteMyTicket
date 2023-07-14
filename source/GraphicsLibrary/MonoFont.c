@@ -5,7 +5,7 @@
 static inline void GenericDrawCharacter(Bitmap *bitmap,const Font *font,int x,int y,
 Pixel col,CompositionMode comp,int c,GenericDrawHorizontalLineFunction *hlinefunc);
 
-int WidthOfMonoFontCharacter(const Font *font,int c)
+int KerningForMonoFontCharacters(const Font *font,int c,int prev)
 {
 	const MonoFont *self=(const MonoFont *)font;
 
@@ -13,7 +13,18 @@ int WidthOfMonoFontCharacter(const Font *font,int c)
 	if(!self->glyphs[c-self->firstglyph]) return 0;
 
 	const uint8_t *data=self->glyphs[c-self->firstglyph];
-	return data[0];
+	return (int8_t)data[0];
+}
+
+int SpacingForMonoFontCharacter(const Font *font,int c)
+{
+	const MonoFont *self=(const MonoFont *)font;
+
+	if(c<self->firstglyph || c>self->lastglyph) return 0;
+	if(!self->glyphs[c-self->firstglyph]) return 0;
+
+	const uint8_t *data=self->glyphs[c-self->firstglyph];
+	return data[1];
 }
 
 void DrawMonoFontCharacter(Bitmap *bitmap,const Font *font,int x,int y,Pixel col,int c)
@@ -35,9 +46,9 @@ Pixel col,CompositionMode comp,int c,GenericDrawHorizontalLineFunction *hlinefun
 	if(!self->glyphs[c-self->firstglyph]) return;
 
 	const uint8_t *data=self->glyphs[c-self->firstglyph];
-	int width=data[1];
-	int height=data[2];
-	const uint8_t *spans=&data[3];
+	int width=data[2];
+	int height=data[3];
+	const uint8_t *spans=&data[4];
 
 	for(int dy=0;dy<height;dy++)
 	{

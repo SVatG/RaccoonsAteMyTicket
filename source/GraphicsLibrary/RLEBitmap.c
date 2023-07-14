@@ -86,10 +86,9 @@ void InitialiseRLEBitmapFromPartialBitmap(RLEBitmap *self,const Bitmap *bitmap,i
 			if(x<width || filled!=0) *ptr++=filled;
 			#else
 			*ptr++=RLECode(empty,filled);
+			#endif
 			memcpy(ptr,ConstBitmapPixelPointer(bitmap,filledstart+x0,y+y0),filled*sizeof(Pixel));
 			ptr+=filled;
-			#endif
 		}
 	}
 }
-

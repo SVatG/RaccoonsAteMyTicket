@@ -8,7 +8,8 @@
 
 typedef struct Font Font;
 
-typedef int CharacterWidthFontFunction(const Font *font,int c);
+typedef int CharacterKerningFontFunction(const Font *font,int c,int prev);
+typedef int CharacterSpacingFontFunction(const Font *font,int c);
 typedef int StringWidthFontFunction(const Font *font,const void *str);
 typedef void DrawCharacterFontFunction(Bitmap *bitmap,const Font *font,int x,int y,Pixel col,int c);
 typedef void DrawStringFontFunction(Bitmap *bitmap,const Font *font,int x,int y,Pixel col,const void *str);
@@ -19,7 +20,8 @@ struct Font
 {
 	int height;
 
-	CharacterWidthFontFunction *charwidthfunc;
+	CharacterKerningFontFunction *charkerningfunc;
+	CharacterSpacingFontFunction *charspacingfunc;
 	StringWidthFontFunction *stringwidthfunc;
 	DrawCharacterFontFunction *drawcharfunc;
 	DrawStringFontFunction *drawstringfunc;
@@ -32,9 +34,14 @@ static inline int HeightOfFont(const Font *font)
 	return font->height;
 }
 
-static inline int WidthOfCharacter(const Font *font,int c)
+static inline int KerningForCharacters(const Font *font,int c,int prev)
 {
-	return font->charwidthfunc(font,c);
+	return font->charkerningfunc(font,c,prev);
+}
+
+static inline int SpacingForCharacter(const Font *font,int c)
+{
+	return font->charspacingfunc(font,c);
 }
 
 static inline int WidthOfString(const Font *font,const void *str)

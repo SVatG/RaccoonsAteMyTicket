@@ -2,7 +2,7 @@
 #define __HELPERS_BITMAP_LOADER_H__
 
 #include "BitmapAllocator.h"
-#include "PNG/PNG.h"
+#include "PNG/PNGAllocator.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -13,7 +13,7 @@
 int _fileno(FILE *fh); // Why isn't this defined? Who knows.
 #endif
 
-static void *BitmapLoaderPixelFunc(PNGLoader *loader,void *destination,uint8_t r,uint8_t g,uint8_t b,uint8_t a,int x,int y);
+static void *BitmapLoaderPixelFunc(PNGLoader *loader,void *destination,uint8_t r,uint8_t g,uint8_t b,uint8_t a,uint8_t index,int x,int y);
 
 static Bitmap *AllocateBitmapWithContentsOfPNGFile(const char *filename)
 {
@@ -63,18 +63,23 @@ static Bitmap *AllocateBitmapWithContentsOfPNGFile(const char *filename)
 	Bitmap *self=AllocateBitmap(loader.width,loader.height);
 	if(!self) { free(bytes); return NULL; }
 
-	if(!LoadPNGImageData(&loader,self->pixels,self->bytesperrow,BitmapLoaderPixelFunc))
-	{ free(bytes); FreeBitmap(self); return NULL; }
+	bool result = LoadPNGImageData(&loader,self->pixels,self->bytesperrow,BitmapLoaderPixelFunc,NULL);
 
 	free(bytes);
+
+	if(!result) { FreeBitmap(self); return NULL; }
 
 	return self;
 }
 
-static void *BitmapLoaderPixelFunc(PNGLoader *loader,void *destination,uint8_t r,uint8_t g,uint8_t b,uint8_t a,int x,int y)
+static void *BitmapLoaderPixelFunc(PNGLoader *loader,void *destination,uint8_t r,uint8_t g,uint8_t b,uint8_t a,uint8_t index,int x,int y)
 {
 	Pixel *pixel=destination;
+	#ifdef IndexedPixels
+	*pixel=index;
+	#else
 	*pixel=RGBA(r,g,b,a);
+	#endif
 	return pixel+1;
 }
 

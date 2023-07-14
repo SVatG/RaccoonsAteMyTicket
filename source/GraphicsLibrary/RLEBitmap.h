@@ -5,7 +5,7 @@
 #include "Bitmap.h"
 #include "Drawing.h"
 
-#include <stdlib.h>
+#include <stddef.h>
 #include <stdint.h>
 
 typedef struct RLEBitmap
@@ -36,8 +36,6 @@ size_t SizeOfRLEBitmapFromPartialBitmap(const Bitmap *bitmap,int x,int y,int wid
 
 void InitialiseRLEBitmapFromBitmap(RLEBitmap *self,const Bitmap *bitmap);
 void InitialiseRLEBitmapFromPartialBitmap(RLEBitmap *self,const Bitmap *bitmap,int x,int y,int width,int height);
-#define InitializeRLEBitmapFromBitmap InitialiseRLEBitmapFromBitmap
-#define InitializeRLEBitmapFromPartialBitmap InitialiseRLEBitmapFromPartialBitmap
 
 void DrawRLEBitmap(Bitmap *bitmap,const RLEBitmap *src,int x,int y);
 void DrawRLEBitmapNoClip(Bitmap *bitmap,const RLEBitmap *src,int x,int y);

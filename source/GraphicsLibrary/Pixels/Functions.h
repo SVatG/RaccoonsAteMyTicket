@@ -5,7 +5,7 @@
 
 #define Clamp(x,min,max) ((x)<(min)?(min):(x)>(max)?(max):(x))
 
-#define BitMaskAt(pos,length) (((1<<(length))-1)<<(pos))
+#define BitMaskAt(pos,length) ((unsigned int)(((1ul<<(length))-1)<<(pos)))
 
 #define BitExpansionMultiplier(bits) ( \
 	(bits)==7?0x81: \

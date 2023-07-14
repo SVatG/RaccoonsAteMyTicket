@@ -14,7 +14,7 @@ typedef struct ColourFont
 {
 	Font font;
 	int firstglyph,lastglyph;
-	const ColourGlyph glyphs[0];
+	const ColourGlyph *glyphs[0];
 } ColourFont;
 
 int KerningForColourFontCharacters(const Font *font,int c,int prev);

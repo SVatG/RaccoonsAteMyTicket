@@ -3,8 +3,8 @@
 
 #include "Pixels.h"
 
-Pixel RandomColour();
-Pixel RandomBrightColour();
-Pixel RandomBrightSaturatedColour();
+Pixel RandomColour(void);
+Pixel RandomBrightColour(void);
+Pixel RandomBrightSaturatedColour(void);
 
 #endif

@@ -5,7 +5,7 @@
 
 #include <stdlib.h>
 
-static inline RLEBitmap *AllocateRLEBitmapWithBitmap(const Bitmap *bitmap)
+static inline RLEBitmap *AllocateRLEBitmapFromBitmap(const Bitmap *bitmap)
 {
 	RLEBitmap *self=malloc(SizeOfRLEBitmapFromBitmap(bitmap));
 	if(!self) return NULL;
@@ -15,7 +15,7 @@ static inline RLEBitmap *AllocateRLEBitmapWithBitmap(const Bitmap *bitmap)
 	return self;
 }
 
-static inline RLEBitmap *AllocateRLEBitmapWithPartialBitmap(const Bitmap *bitmap,int x,int y,int width,int height)
+static inline RLEBitmap *AllocateRLEBitmapFromPartialBitmap(const Bitmap *bitmap,int x,int y,int width,int height)
 {
 	RLEBitmap *self=malloc(SizeOfRLEBitmapFromBitmap(bitmap));
 	if(!self) return NULL;

@@ -247,8 +247,7 @@ int main() {
         printf("music.ogg invalid.");
         return -1;
     }
-    
-    
+        
     // Preload music
     printf("Preloading, please wait...\n");
     printf("This can take a while, especially on an old 3DS, sorry.\n");
@@ -264,8 +263,6 @@ int main() {
     }
     ov_clear(&vorbis);
     fclose(fp);
-
-    //waitForA("Loaded vorbis, press A -> B to continue");
 
     printf("Demobeginn imminent.\n");
 

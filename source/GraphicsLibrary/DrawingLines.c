@@ -1,6 +1,8 @@
 #include "Drawing.h"
 #include "GenericDrawing.h"
 
+static inline int iabs(int x) { return x >= 0 ? x : -x; }
+
 static inline void GenericDrawLine(Bitmap *bitmap,int x1,int y1,int x2,int y2,Pixel c,CompositionMode comp,
 GenericDrawPixelFunction *pixelfunc,GenericDrawHorizontalLineFunction *hlinefunc,GenericDrawVerticalLineFunction *vlinefunc);
 
@@ -65,7 +67,7 @@ GenericDrawPixelFunction *pixelfunc,GenericDrawHorizontalLineFunction *hlinefunc
 		return;
 	}
 
-	bool steep=abs(y2-y1)>abs(x2-x1);
+	bool steep=iabs(y2-y1)>iabs(x2-x1);
 
 	if(steep)
 	{

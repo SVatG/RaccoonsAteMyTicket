@@ -3,7 +3,7 @@
 
 #include "Pixels.h"
 
-#include <stdlib.h>
+#include <stddef.h>
 #include <stdint.h>
 
 typedef struct Bitmap

@@ -105,10 +105,13 @@ const struct
 	{
 		{
 			40,
-			WidthOfMonoFontCharacter,
+			KerningForMonoFontCharacters,
+			SpacingForMonoFontCharacter,
 			WidthOfSimpleString,
 			DrawMonoFontCharacter,
 			DrawSimpleString,
+			CompositeMonoFontCharacter,
+			CompositeSimpleString,
 		},
 		32,127,
 	},

@@ -69,4 +69,14 @@ void CompositeBitmapNoClip(Bitmap *dest,const Bitmap *src,int x,int y,Compositio
 void CompositePartialBitmap(Bitmap *dest,const Bitmap *src,int x,int y,int u,int v,int w,int h,CompositionMode comp);
 void CompositePartialBitmapNoClip(Bitmap *dest,const Bitmap *src,int x,int y,int u,int v,int w,int h,CompositionMode comp);
 
+typedef float EasingFunction(float x);
+
+void DrawVerticalGradientInLinearRGB(Bitmap *bitmap, int x, int y, int width, int height, Pixel from, Pixel to, EasingFunction easing);
+void DrawVerticalGradientInOklab(Bitmap *bitmap, int x, int y, int width, int height, Pixel from, Pixel to, EasingFunction easing);
+void DrawHorizontalGradientInLinearRGB(Bitmap *bitmap, int x, int y, int width, int height, Pixel from, Pixel to, EasingFunction easing);
+void DrawHorizontalGradientInOklab(Bitmap *bitmap, int x, int y, int width, int height, Pixel from, Pixel to, EasingFunction easing);
+
+float LinearEasing(float x);
+float SmoothStepEasing(float x);
+
 #endif
