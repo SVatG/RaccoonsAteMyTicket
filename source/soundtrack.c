@@ -35,7 +35,7 @@ static bool music_preload(u32 need_at_least) {
     static bool end_reached = false;
     if (end_reached) return false;
 
-    if (need_at_least == 0) need_at_least = AUDIO_BLOCKSIZE;
+    if (need_at_least == 0) need_at_least = AUDIO_BLOCKSIZE*2;
 
     __asm__ volatile("":::"memory");
     while (readBytes < playBytes + need_at_least) {
