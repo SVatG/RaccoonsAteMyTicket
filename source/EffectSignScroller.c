@@ -73,7 +73,7 @@ static void signSetStrings(const char* a, const char* b) {
     fontRender(SCREEN01, "Nordlicht 2023");
     fontRender(SCREEN10, "train stops at:");
     fontRender(SCREEN11, a);
-    fontRender(SCREEN00, "Track 10  8:10");
+    fontRender(SCREEN20, "Track 10  8:10");
     fontRender(SCREEN21, "Nordlicht 2023");
     fontRender(SCREEN30, "train stops at:");
     fontRender(SCREEN31, b);
