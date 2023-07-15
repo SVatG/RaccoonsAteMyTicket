@@ -36,6 +36,7 @@ static const struct sync_track* sync_cpyr[3];
 static const struct sync_track* sync_cpos[3];
 static const struct sync_track* sync_zoom;
 //static const struct sync_track* sync_fpos[2];
+static const struct sync_track* sync_scrollspeed;
 
 extern Font London40Regular;
 
@@ -45,7 +46,7 @@ static C3D_Tex texScroll;
 
 #define TEXTSIZE 512
 
-#define SCREENij(i,j) 16, (20+48*(j)+124*(i))
+#define SCREENij(i,j) 16, (16+48*(j)+124*(i))
 #define SCREEN00 SCREENij(0,0)
 #define SCREEN10 SCREENij(1,0)
 #define SCREEN20 SCREENij(2,0)
@@ -66,6 +67,33 @@ static void fontFlushToGPU(void) {
             (u32*)texScroll.data, GX_BUFFER_DIM(TEXTSIZE, TEXTSIZE), TEXTURE_TRANSFER_FLAGS);
     gspWaitForPPF();
 }
+static void signSetStrings(const char* a, const char* b) {
+    ClearBitmap(&textmap);
+    fontRender(SCREEN00, "Track 10  8:10");
+    fontRender(SCREEN01, "Nordlicht 2023");
+    fontRender(SCREEN10, "train stops at:");
+    fontRender(SCREEN11, a);
+    fontRender(SCREEN00, "Track 10  8:10");
+    fontRender(SCREEN21, "Nordlicht 2023");
+    fontRender(SCREEN30, "train stops at:");
+    fontRender(SCREEN31, b);
+    fontFlushToGPU();
+}
+
+static const char* COMPOS[] = {
+    "oldschool gfx,",
+    "newschool gfx,",
+    "ascii/ansi,   ",
+    "executable,   ",
+    "streaming and ",
+    "tracked music,",
+    "photo, 512b,  ",
+    "gravedigger,  ",
+    "old&newschool ",
+    "demo, wild,   ",
+    "fun compo!    ",
+    "trans rights! ",
+};
 
 void effectSignScrollerInit() {
     // Prep general info: Shader (precompiled in main for important ceremonial reasons)
@@ -91,8 +119,8 @@ void effectSignScrollerInit() {
 
     // render font?!
     ClearBitmap(&textmap);
-    fontRender(0, 0, "hello world");
-    fontFlushToGPU();
+    /*fontRender(0, 0, "hello world");
+    fontFlushToGPU();*/
 
     // Load a model
     loadTexture(&texBase, NULL, "romfs:/tex_3ds_test.bin");
@@ -113,6 +141,7 @@ void effectSignScrollerInit() {
         }*/
     }
     sync_zoom = sync_get_track(rocket, "signscroll.czoom");
+    sync_scrollspeed = sync_get_track(rocket, "signscroll.speed");
 }
 
 // TODO: Split out shade setup
@@ -198,19 +227,10 @@ static void drawModel(fbxBasedObject* model, float row) {
 }
 
 void effectSignScrollerRender(C3D_RenderTarget* targetLeft, C3D_RenderTarget* targetRight, float row, float iod) {
-
-    /*int fx = (int)sync_get_val(sync_fpos[0], row),
-        fy = (int)sync_get_val(sync_fpos[1], row);*/
-    ClearBitmap(&textmap);
-    fontRender(SCREEN00, "hello screen00");
-    fontRender(SCREEN01, "hello screen01");
-    fontRender(SCREEN10, "hello screen10");
-    fontRender(SCREEN11, "hello screen11");
-    fontRender(SCREEN20, "hello screen20");
-    fontRender(SCREEN21, "hello screen21");
-    fontRender(SCREEN30, "hello screen30");
-    fontRender(SCREEN31, "hello screen31");
-    fontFlushToGPU();
+    int index = (int)sync_get_val(sync_scrollspeed, row);
+    index %= sizeof(COMPOS)/sizeof(*COMPOS);
+    const char *compo = COMPOS[index];
+    signSetStrings(compo, compo);
 
     // Frame starts (TODO pull out?)   
     C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
