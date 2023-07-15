@@ -35,31 +35,36 @@ static fbxBasedObject modelSign;
 static const struct sync_track* sync_cpyr[3];
 static const struct sync_track* sync_cpos[3];
 static const struct sync_track* sync_zoom;
+//static const struct sync_track* sync_fpos[2];
 
-extern Font London40Regular; 
+extern Font London40Regular;
 
 static Bitmap textmap;
 static Pixel* textpx;
 static C3D_Tex texScroll;
 
+#define TEXTSIZE 512
+
+#define SCREENij(i,j) 16, (20+48*(j)+124*(i))
+#define SCREEN00 SCREENij(0,0)
+#define SCREEN10 SCREENij(1,0)
+#define SCREEN20 SCREENij(2,0)
+#define SCREEN30 SCREENij(3,0)
+#define SCREEN01 SCREENij(0,1)
+#define SCREEN11 SCREENij(1,1)
+#define SCREEN21 SCREENij(2,1)
+#define SCREEN31 SCREENij(3,1)
+
+// screen i: (16, 20+124*i); (16, 20+48+124*i)
 static void fontRender(int x, int y, const char* str) {
     Pixel col = 0xffff00ffu; // yellow, hopefully
-    ClearBitmap(&textmap);
     CompositeSimpleString(&textmap, &London40Regular, x, y, col, SourceOverCompositionMode, str);
-    /*DrawSimpleString(&textmap, &London40Regular, x, y, col, str);*/
-    /*DrawCircle(&textmap, 128, 128, 30, col);*/
 }
 static void fontFlushToGPU(void) {
-    //C3D_TexUpload(&texScroll, textmap.pixels);
-    GSPGPU_FlushDataCache(textmap.pixels, 256 * 256 * sizeof(Pixel));
-    GX_DisplayTransfer((u32*)textmap.pixels, GX_BUFFER_DIM(256, 256),
-            (u32*)texScroll.data, GX_BUFFER_DIM(256, 256), TEXTURE_TRANSFER_FLAGS);
+    GSPGPU_FlushDataCache(textmap.pixels, TEXTSIZE * TEXTSIZE * sizeof(Pixel));
+    GX_DisplayTransfer((u32*)textmap.pixels, GX_BUFFER_DIM(TEXTSIZE, TEXTSIZE),
+            (u32*)texScroll.data, GX_BUFFER_DIM(TEXTSIZE, TEXTSIZE), TEXTURE_TRANSFER_FLAGS);
     gspWaitForPPF();
-    /*C3D_SyncDisplayTransfer((u32*)textmap.pixels, GX_BUFFER_DIM(256, 256),
-            (u32*)texScroll.data, GX_BUFFER_DIM(256, 256), TEXTURE_TRANSFER_FLAGS);*/
-    /*C3D_SyncTextureCopy((u32*)textmap.pixels, GX_BUFFER_DIM(256, 256),
-            (u32*)texScroll.data, GX_BUFFER_DIM(256, 256),
-            256*256*sizeof(Pixel), TEXTURE_TRANSFER_FLAGS);*/
 }
 
 void effectSignScrollerInit() {
@@ -78,14 +83,15 @@ void effectSignScrollerInit() {
     }
 
     // init font stuff
-    size_t w = 256, h = 256;
+    size_t w = TEXTSIZE, h = TEXTSIZE;
     size_t bpr = BytesPerRowForWidth(w);
     textpx = (Pixel*)linearAlloc(bpr * h);
     InitializeBitmap(&textmap, w, h, bpr, textpx);
     C3D_TexInit(&texScroll, w, h, GPU_RGBA8);
 
     // render font?!
-    fontRender(4, 4, "hello world");
+    ClearBitmap(&textmap);
+    fontRender(0, 0, "hello world");
     fontFlushToGPU();
 
     // Load a model
@@ -100,6 +106,11 @@ void effectSignScrollerInit() {
         sync_cpyr[i] = sync_get_track(rocket, boneName);
         sprintf(boneName, "signscroll.cpos.%c", "xyz"[i]);
         sync_cpos[i] = sync_get_track(rocket, boneName);
+
+        /*if (i < 2) {
+            sprintf(boneName, "signscroll.font.%c", "xy"[i]);
+            sync_fpos[i] = sync_get_track(rocket, boneName);
+        }*/
     }
     sync_zoom = sync_get_track(rocket, "signscroll.czoom");
 }
@@ -188,7 +199,17 @@ static void drawModel(fbxBasedObject* model, float row) {
 
 void effectSignScrollerRender(C3D_RenderTarget* targetLeft, C3D_RenderTarget* targetRight, float row, float iod) {
 
-    fontRender(100, 100, "hello world");
+    /*int fx = (int)sync_get_val(sync_fpos[0], row),
+        fy = (int)sync_get_val(sync_fpos[1], row);*/
+    ClearBitmap(&textmap);
+    fontRender(SCREEN00, "hello screen00");
+    fontRender(SCREEN01, "hello screen01");
+    fontRender(SCREEN10, "hello screen10");
+    fontRender(SCREEN11, "hello screen11");
+    fontRender(SCREEN20, "hello screen20");
+    fontRender(SCREEN21, "hello screen21");
+    fontRender(SCREEN30, "hello screen30");
+    fontRender(SCREEN31, "hello screen31");
     fontFlushToGPU();
 
     // Frame starts (TODO pull out?)   
