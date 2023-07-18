@@ -28,12 +28,20 @@ static int uLocBone[21];
 static C3D_Tex texIntro;
 static C3D_Tex texSky;
 static C3D_TexCube texSkyCube;
+static C3D_Tex texFg;
 static fbxBasedObject modelTextA;
 static fbxBasedObject modelTextB;
 static fbxBasedObject modelTextC;
-static fbxBasedObject modelEnv;
+static fbxBasedObject modelCube;
 static fbxBasedObject modelTrain;
+static fbxBasedObject modelEnv;
+static fbxBasedObject modelTrees;
 static fbxBasedObject camProxy;
+
+// rot + zoom + skybox
+static const struct sync_track* syncZoom;
+static const struct sync_track* syncRot;
+static const struct sync_track* syncSky;
 
 void effectIntroInit() {
     // Prep general info: Shader (precompiled in main for important ceremonial reasons)
@@ -53,12 +61,20 @@ void effectIntroInit() {
     // Load a model
     loadTexture(&texIntro, NULL, "romfs:/tex_intro.bin");
     loadTexture(&texSky, &texSkyCube, "romfs:/sky_cube.bin");
+    loadTexture(&texFg, NULL, "romfs:/tex_fg1.bin");
     modelTextA = loadFBXObject("romfs:/obj_introtext_svatg.vbo", &texIntro, "intro.text");
     modelTextB = loadFBXObject("romfs:/obj_introtext_inviteyouto.vbo", &texIntro, "intro.text");
     modelTextC = loadFBXObject("romfs:/obj_introtext_nordlicht2023.vbo", &texIntro, "intro.text");
     camProxy = loadFBXObject("romfs:/obj_introtext_cam_proxy.vbo", &texIntro, "intro.cam");
-    modelEnv = loadFBXObject("romfs:/obj_introtext_env.vbo", &texIntro, "intro.env");
+    modelCube = loadFBXObject("romfs:/obj_introtext_env.vbo", &texIntro, "intro.cube");
     modelTrain = loadFBXObject("romfs:/obj_introtext_train.vbo", &texIntro, "intro.train");
+    modelEnv = loadFBXObject("romfs:/obj_introtext_floor_real.vbo", &texIntro, "intro.env");
+    modelTrees = loadFBXObject("romfs:/obj_introtext_trees.vbo", &texIntro, "intro.env");
+
+    // More sync
+    syncZoom = sync_get_track(rocket, "intro.zoom");
+    syncRot = sync_get_track(rocket, "intro.rot");
+    syncSky = sync_get_track(rocket, "intro.sky");
 }
 
 // TODO: Split out shade setup
@@ -145,32 +161,33 @@ static void drawModel(fbxBasedObject* model, float row) {
 void effectIntroRender(C3D_RenderTarget* targetLeft, C3D_RenderTarget* targetRight, float row, float iod) {
     // Frame starts (TODO pull out?)   
     C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
- 
+    
+    // Get some sync vals
+    float syncSkyVal = sync_get_val(syncSky, row);
+    float syncZoomVal = sync_get_val(syncZoom, row) + 1.0;
+    float syncRotVal = sync_get_val(syncRot, row);
+
     // Send modelview 
     C3D_Mtx baseview;
     Mtx_Identity(&baseview);
     Mtx_RotateZ(&baseview, M_PI, true);
     Mtx_RotateX(&baseview, -M_PI / 2, true);
     Mtx_RotateY(&baseview, M_PI, true);
-  
+    
     C3D_Mtx camMat;
     getBoneMat(&camProxy, row, &camMat, 3);
     Mtx_Inverse(&camMat);
 
     C3D_Mtx modelview;
     Mtx_Multiply(&modelview, &baseview, &camMat);
+    Mtx_RotateY(&modelview, M_PI * syncRotVal, true);
+    Mtx_Scale(&modelview, syncZoomVal, syncZoomVal, syncZoomVal);
 
     C3D_Mtx skyview;
     Mtx_Multiply(&skyview, &baseview, &camMat);
-    Mtx_RotateZ(&skyview, row * 0.05, true);
+    Mtx_RotateZ(&skyview, syncSkyVal * M_PI, true);
 
     //Mtx_Scale(&modelview, 0.01, 0.01, 0.01);
-
-
-    //Mtx_Identity(&modelview);
-    //Mtx_Translate(&modelview, 0.0, -1.0, -40.0, true);
-    //Mtx_RotateX(&modelview, M_PI, true);
-    //Mtx_RotateY(&modelview, M_PI / 2, true);
 
      // Left eye 
     C3D_FrameDrawOn(targetLeft);  
@@ -185,11 +202,14 @@ void effectIntroRender(C3D_RenderTarget* targetLeft, C3D_RenderTarget* targetRig
     drawModel(&modelTextA, row);
     drawModel(&modelTextB, row);
     drawModel(&modelTextC, row);
-    drawModel(&modelEnv, row);
+    drawModel(&modelCube, row);
     drawModel(&modelTrain, row);
+    drawModel(&modelEnv, row);
+    drawModel(&modelTrees, row);
     skyboxCubeImmediate(&texSky, 1000.0f, vec3(0.0f, 0.0f, 0.0f), &skyview, &projection); 
 
-    // Do fading
+    // Do fading and fg
+    fullscreenQuad(texFg, 0.0, 1.0);
     fade();
 
     // Right eye?
@@ -206,12 +226,14 @@ void effectIntroRender(C3D_RenderTarget* targetLeft, C3D_RenderTarget* targetRig
         drawModel(&modelTextA, row);
         drawModel(&modelTextB, row);
         drawModel(&modelTextC, row);
-        drawModel(&modelEnv, row);
+        drawModel(&modelCube, row);
         drawModel(&modelTrain, row);
-        
+        drawModel(&modelEnv, row);
+        drawModel(&modelTrees, row);        
         skyboxCubeImmediate(&texSky, 1000.0f, vec3(0.0f, 0.0f, 0.0f), &skyview, &projection); 
 
-        // Perform fading
+        // Do fading and fg
+        fullscreenQuad(texFg, 0.0, 1.0);
         fade();
     } 
 
@@ -224,7 +246,7 @@ void effectIntroExit() {
     freeFBXObject(&modelTextA); 
     freeFBXObject(&modelTextB);
     freeFBXObject(&modelTextC);
-    freeFBXObject(&modelEnv);
+    freeFBXObject(&modelCube);
     freeFBXObject(&modelTrain);
     freeFBXObject(&camProxy);
     C3D_TexDelete(&texIntro);
