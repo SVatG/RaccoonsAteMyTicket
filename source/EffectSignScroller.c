@@ -29,8 +29,10 @@ static int uLocBone[21];
 static C3D_Tex texBase;
 static C3D_Tex texSky;
 static C3D_TexCube texSkyCube;
+static C3D_Tex texFg;
 static fbxBasedObject modelSignpost;
 static fbxBasedObject modelSign;
+static fbxBasedObject modelFloor;
 
 static const struct sync_track* sync_cpyr[3];
 static const struct sync_track* sync_cpos[3];
@@ -123,10 +125,12 @@ void effectSignScrollerInit() {
     fontFlushToGPU();*/
 
     // Load a model
-    loadTexture(&texBase, NULL, "romfs:/tex_3ds_test.bin");
+    loadTexture(&texBase, NULL, "romfs:/tex_signpost.bin");
     loadTexture(&texSky, &texSkyCube, "romfs:/sky_cube.bin");
+    loadTexture(&texFg, NULL, "romfs:/tex_fg2.bin");
     modelSignpost = loadFBXObject("romfs:/obj_signpost_sign_post.vbo", &texBase, "signscroll.signpost.frame");
     modelSign = loadFBXObject("romfs:/obj_signpost_sign_signs.vbo", &texScroll, "signscroll.sign.frame");
+    modelFloor = loadFBXObject("romfs:/obj_signpost_floor.vbo", &texScroll, "signscroll.sign.frame");
 
     for (int i = 0; i < 3; ++i) {
         const char* names[3] = { "pitch", "yaw", "roll" };
@@ -284,10 +288,12 @@ void effectSignScrollerRender(C3D_RenderTarget* targetLeft, C3D_RenderTarget* ta
     // Dispatch drawcalls
     drawModel(&modelSignpost, row);
     drawModel(&modelSign, row);
+    drawModel(&modelFloor, row);
     skyboxCubeImmediate(&texSky, 1000.0f, vec3(0.0f, 0.0f, 0.0f), &skyview, &projection);
 
     // Do fading
-    //fade();
+    fullscreenQuad(texFg, 0.0, 1.0);    
+    fade();
 
     // Right eye?
     if(iod > 0.0) {
@@ -301,11 +307,13 @@ void effectSignScrollerRender(C3D_RenderTarget* targetLeft, C3D_RenderTarget* ta
 
         // Dispatch drawcalls
         drawModel(&modelSignpost, row);
-        //drawModel(&modelSign, row);
+        drawModel(&modelSign, row);
+        drawModel(&modelFloor, row);
         skyboxCubeImmediate(&texSky, 1000.0f, vec3(0.0f, 0.0f, 0.0f), &skyview, &projection);
 
         // Perform fading
-        //fade();
+        fullscreenQuad(texFg, 0.0, 1.0);
+        fade();
     }
 
     // Swap
@@ -317,6 +325,8 @@ void effectSignScrollerExit() {
     linearFree(textpx);
     freeFBXObject(&modelSignpost);
     freeFBXObject(&modelSign);
+    freeFBXObject(&modelFloor);
     C3D_TexDelete(&texBase);
     C3D_TexDelete(&texSky);
+    C3D_TexDelete(&texFg);
 }

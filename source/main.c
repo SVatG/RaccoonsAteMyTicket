@@ -78,21 +78,23 @@ extern void effectSignScrollerInit();
 extern void effectSignScrollerRender(C3D_RenderTarget* targetLeft, C3D_RenderTarget* targetRight, float row, float iod);
 extern void effectSignScrollerExit();
 
+extern void effectLichthausInit();
+extern void effectLichthausRender(C3D_RenderTarget* targetLeft, C3D_RenderTarget* targetRight, float row, float iod);
+extern void effectLichthausExit();
+
 int main() {
     bool DUMPFRAMES = false;
     bool DUMPFRAMES_3D = false;
     float DUMPFRAMES_3D_SEP = 0.4;
 
     // Set up effect list. Sequencing is done in Rocket
-    #define EFFECT_MAX 3
+    #define EFFECT_MAX 4
     effect effect_list[EFFECT_MAX];
 
-    // The tunnel-actually-platform effect currently will NOT exist cleanly. (TODO FIXME? will be replaced anyways)
     effect_list[0].init = effectIntroInit;
     effect_list[0].render = effectIntroRender;
     effect_list[0].exit = effectIntroExit;
 
-    // Actually the effects are just kind of broken generally. TODO: Fix
     effect_list[1].init = effectBillboardsInit;
     effect_list[1].render = effectBillboardsRender;
     effect_list[1].exit = effectBillboardsExit;
@@ -100,6 +102,10 @@ int main() {
     effect_list[2].init = effectSignScrollerInit;
     effect_list[2].render = effectSignScrollerRender;
     effect_list[2].exit = effectSignScrollerExit;
+
+    effect_list[3].init = effectLichthausInit;
+    effect_list[3].render = effectLichthausRender;
+    effect_list[4].exit = effectLichthausExit;
 
     // Initialize graphics
     gfxInit(GSP_RGBA8_OES, GSP_BGR8_OES, false);
