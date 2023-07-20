@@ -1,0 +1,44 @@
+<sync rows="512">
+	<tracks>
+		<track name="global.fade">
+			<key interpolation="1" row="0" value="1"/>
+			<key interpolation="0" row="16" value="0"/>
+			<key interpolation="1" row="200" value="0"/>
+			<key interpolation="0" row="232" value="1"/>
+		</track>
+		<track name="global.effect">
+			<key interpolation="0" row="0" value="2"/>
+		</track>
+		<track name="global.image"/>
+		<track name="intro.text.frame"/>
+		<track name="intro.cam.frame"/>
+		<track name="intro.cube.frame"/>
+		<track name="intro.train.frame"/>
+		<track name="intro.env.frame"/>
+		<track name="intro.zoom"/>
+		<track name="intro.rot"/>
+		<track name="intro.sky"/>
+		<track name="signscroll.frame.frame">
+			<key interpolation="1" row="0" value="0"/>
+			<key interpolation="1" row="64" value="31"/>
+			<key interpolation="2" row="112" value="31.5"/>
+			<key interpolation="1" row="128" value="40"/>
+			<key interpolation="2" row="176" value="41"/>
+			<key interpolation="1" row="192" value="50"/>
+			<key interpolation="0" row="256" value="60"/>
+		</track>
+		<track name="signscroll.speed">
+			<key interpolation="1" row="53" value="0"/>
+			<key interpolation="0" row="112" value="6"/>
+			<key interpolation="1" row="128" value="6"/>
+			<key interpolation="1" row="168" value="12"/>
+			<key interpolation="0" row="216" value="15"/>
+		</track>
+		<track name="signscroll.sky">
+			<key interpolation="0" row="0" value="1.5"/>
+			<key interpolation="1" row="72" value="1.5"/>
+			<key interpolation="0" row="96" value="0"/>
+		</track>
+	</tracks>
+	<bookmarks/>
+</sync>

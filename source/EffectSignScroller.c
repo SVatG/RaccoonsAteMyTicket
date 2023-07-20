@@ -33,12 +33,10 @@ static C3D_Tex texFg;
 static fbxBasedObject modelSignpost;
 static fbxBasedObject modelSign;
 static fbxBasedObject modelFloor;
+static fbxBasedObject camProxy;
 
-static const struct sync_track* sync_cpyr[3];
-static const struct sync_track* sync_cpos[3];
-static const struct sync_track* sync_zoom;
-//static const struct sync_track* sync_fpos[2];
-static const struct sync_track* sync_scrollspeed;
+static const struct sync_track* syncText;
+static const struct sync_track* syncSky;
 
 extern Font London40Regular;
 
@@ -128,24 +126,12 @@ void effectSignScrollerInit() {
     loadTexture(&texBase, NULL, "romfs:/tex_signpost.bin");
     loadTexture(&texSky, &texSkyCube, "romfs:/sky_cube.bin");
     loadTexture(&texFg, NULL, "romfs:/tex_fg2.bin");
-    modelSignpost = loadFBXObject("romfs:/obj_signpost_sign_post.vbo", &texBase, "signscroll.signpost.frame");
-    modelSign = loadFBXObject("romfs:/obj_signpost_sign_signs.vbo", &texScroll, "signscroll.sign.frame");
-    modelFloor = loadFBXObject("romfs:/obj_signpost_floor.vbo", &texScroll, "signscroll.sign.frame");
-
-    for (int i = 0; i < 3; ++i) {
-        const char* names[3] = { "pitch", "yaw", "roll" };
-        sprintf(boneName, "signscroll.c%s", names[i]);
-        sync_cpyr[i] = sync_get_track(rocket, boneName);
-        sprintf(boneName, "signscroll.cpos.%c", "xyz"[i]);
-        sync_cpos[i] = sync_get_track(rocket, boneName);
-
-        /*if (i < 2) {
-            sprintf(boneName, "signscroll.font.%c", "xy"[i]);
-            sync_fpos[i] = sync_get_track(rocket, boneName);
-        }*/
-    }
-    sync_zoom = sync_get_track(rocket, "signscroll.czoom");
-    sync_scrollspeed = sync_get_track(rocket, "signscroll.speed");
+    modelSignpost = loadFBXObject("romfs:/obj_signpost_sign_post.vbo", &texBase, "signscroll.frame");
+    modelSign = loadFBXObject("romfs:/obj_signpost_sign_signs.vbo", &texScroll, "signscroll.frame");
+    modelFloor = loadFBXObject("romfs:/obj_signpost_floor.vbo", &texBase, "signscroll.frame");
+    camProxy = loadFBXObject("romfs:/obj_signpost_cam_proxy.vbo", NULL, "signscroll.frame");
+    syncText = sync_get_track(rocket, "signscroll.speed");
+    syncSky = sync_get_track(rocket, "signscroll.sky");
 }
 
 // TODO: Split out shade setup
@@ -231,7 +217,7 @@ static void drawModel(fbxBasedObject* model, float row) {
 }
 
 void effectSignScrollerRender(C3D_RenderTarget* targetLeft, C3D_RenderTarget* targetRight, float row, float iod) {
-    int index = (int)sync_get_val(sync_scrollspeed, row);
+    int index = (int)sync_get_val(syncText, row);
     index %= sizeof(COMPOS)/sizeof(*COMPOS);
     const char *compo = COMPOS[index];
     signSetStrings(compo, compo);
@@ -242,46 +228,28 @@ void effectSignScrollerRender(C3D_RenderTarget* targetLeft, C3D_RenderTarget* ta
     // Send modelview
     C3D_Mtx baseview;
     Mtx_Identity(&baseview);
-    /*Mtx_RotateZ(&baseview, M_PI, true);
+    Mtx_RotateZ(&baseview, M_PI, true);
     Mtx_RotateX(&baseview, -M_PI / 2, true);
-    Mtx_RotateY(&baseview, M_PI, true);*/
-    Mtx_Translate(&baseview, 0.0, -10.0, -200.0, true);
-
+    Mtx_RotateY(&baseview, M_PI, true);
+    
     C3D_Mtx camMat;
-    //getBoneMat(&camProxy, row, &camMat, 3);
-    //Mtx_Inverse(&camMat);
-    float cpitch = sync_get_val(sync_cpyr[0], row),
-          cyaw   = sync_get_val(sync_cpyr[1], row),
-          croll  = sync_get_val(sync_cpyr[2], row);
-    C3D_FVec cpos = FVec3_New(sync_get_val(sync_cpos[0], row),
-                              sync_get_val(sync_cpos[1], row),
-                              sync_get_val(sync_cpos[2], row));
-    float czoom = sync_get_val(sync_zoom, row);
-
-    C3D_FVec p1 = FVec3_New(0,0,1);
-    C3D_FVec p2 = FVec3_New(0,0,0);
-    C3D_FVec up = FVec3_New(0,1,0);
-    Mtx_LookAt(&camMat, p1, p2, up, false);
-
-    Mtx_RotateX(&camMat, cpitch, false);
-    Mtx_RotateY(&camMat, cyaw  , false);
-    Mtx_RotateZ(&camMat, croll , false);
-    Mtx_Translate(&camMat, cpos.x, cpos.y, cpos.z, false);
-    Mtx_Scale(&camMat, czoom, czoom, czoom);
+    getBoneMat(&camProxy, row, &camMat, 0);
+    Mtx_Inverse(&camMat);
 
     C3D_Mtx modelview;
     Mtx_Multiply(&modelview, &baseview, &camMat);
 
     C3D_Mtx skyview;
+    float skyRot = sync_get_val(syncSky, row);
     Mtx_Multiply(&skyview, &baseview, &camMat);
-    Mtx_RotateZ(&skyview, row * 0.05, true);
+    Mtx_RotateZ(&skyview, skyRot, true);
 
      // Left eye
     C3D_FrameDrawOn(targetLeft);
     C3D_RenderTargetClear(targetLeft, C3D_CLEAR_ALL, 0x404040FF, 0);
 
     // Uniform setup
-    Mtx_PerspStereoTilt(&projection, 20.0f*M_PI/180.0f, 400.0f/240.0f, 0.01f, 6000.0f, -iod,  7.0f, false);
+    Mtx_PerspStereoTilt(&projection, 25.0f*M_PI/180.0f, 400.0f/240.0f, 0.01f, 12000.0f, -iod,  7.0f, false);
     C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, uLocProjection, &projection);
     C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, uLocModelview,  &modelview);
 
@@ -289,7 +257,7 @@ void effectSignScrollerRender(C3D_RenderTarget* targetLeft, C3D_RenderTarget* ta
     drawModel(&modelSignpost, row);
     drawModel(&modelSign, row);
     drawModel(&modelFloor, row);
-    skyboxCubeImmediate(&texSky, 1000.0f, vec3(0.0f, 0.0f, 0.0f), &skyview, &projection);
+    skyboxCubeImmediate(&texSky, 4000.0f, vec3(0.0f, 0.0f, 0.0f), &skyview, &projection);
 
     // Do fading
     fullscreenQuad(texFg, 0.0, 1.0);    
@@ -301,7 +269,7 @@ void effectSignScrollerRender(C3D_RenderTarget* targetLeft, C3D_RenderTarget* ta
         C3D_RenderTargetClear(targetRight, C3D_CLEAR_ALL, 0x00ff00FF, 0);
 
         // Uniform setup
-        Mtx_PerspStereoTilt(&projection, 20.0f*M_PI/180.0f, 400.0f/240.0f, 0.01f, 6000.0f, iod, 7.0f, false);
+        Mtx_PerspStereoTilt(&projection, 25.0f*M_PI/180.0f, 400.0f/240.0f, 0.01f, 12000.0f, iod, 7.0f, false);
         C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, uLocProjection, &projection);
         C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, uLocModelview,  &modelview);
 
@@ -309,7 +277,7 @@ void effectSignScrollerRender(C3D_RenderTarget* targetLeft, C3D_RenderTarget* ta
         drawModel(&modelSignpost, row);
         drawModel(&modelSign, row);
         drawModel(&modelFloor, row);
-        skyboxCubeImmediate(&texSky, 1000.0f, vec3(0.0f, 0.0f, 0.0f), &skyview, &projection);
+        skyboxCubeImmediate(&texSky, 4000.0f, vec3(0.0f, 0.0f, 0.0f), &skyview, &projection);
 
         // Perform fading
         fullscreenQuad(texFg, 0.0, 1.0);
@@ -326,6 +294,7 @@ void effectSignScrollerExit() {
     freeFBXObject(&modelSignpost);
     freeFBXObject(&modelSign);
     freeFBXObject(&modelFloor);
+    freeFBXObject(&camProxy);
     C3D_TexDelete(&texBase);
     C3D_TexDelete(&texSky);
     C3D_TexDelete(&texFg);
