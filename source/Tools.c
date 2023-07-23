@@ -627,7 +627,7 @@ void freeFBXObject(fbxBasedObject* object) {
     free(object->animFrames);
 }
 
-inline void skyboxQuadImmediate(vec3_t a, vec3_t b, vec3_t c, vec3_t d) {
+inline static void skyboxQuadImmediate(vec3_t a, vec3_t b, vec3_t c, vec3_t d) {
     C3D_ImmSendAttrib(a.x, a.y, a.z, 0.0f);
     C3D_ImmSendAttrib(b.x, b.y, b.z, 0.0f);
     C3D_ImmSendAttrib(c.x, c.y, c.z, 0.0f);

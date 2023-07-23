@@ -1,0 +1,59 @@
+<sync rows="1024">
+	<tracks>
+		<track name="global.fade"/>
+		<track name="global.effect">
+			<key interpolation="0" value="4" row="0"/>
+		</track>
+		<track name="global.image"/>
+		<track name="intro.text.frame"/>
+		<track name="intro.cam.frame"/>
+		<track name="intro.cube.frame"/>
+		<track name="intro.train.frame"/>
+		<track name="intro.env.frame"/>
+		<track name="intro.zoom"/>
+		<track name="intro.rot"/>
+		<track name="intro.sky"/>
+		<track name="zoom.frame.frame">
+			<key interpolation="0" value="1" row="0"/>
+		</track>
+		<track name="zoom.text">
+			<key interpolation="0" value="0" row="0"/>
+		</track>
+		<track name="zoom.sky">
+			<key interpolation="0" value="0" row="0"/>
+		</track>
+		<track name="zoom.camx">
+			<key interpolation="0" value="-2" row="0"/>
+		</track>
+		<track name="zoom.camy">
+			<key interpolation="0" value="-7" row="0"/>
+		</track>
+		<track name="zoom.camz">
+			<key interpolation="0" value="-5" row="0"/>
+		</track>
+		<track name="zoom.camr">
+			<key interpolation="0" value="10" row="0"/>
+		</track>
+		<track name="zoom.camth">
+			<key interpolation="0" value="3" row="0"/>
+		</track>
+		<track name="zoom.camph">
+			<key interpolation="0" value="-2" row="0"/>
+		</track>
+		<track name="zoom.camrot">
+			<key interpolation="0" value="0.2" row="0"/>
+		</track>
+		<track name="zoom.zoom">
+			<key interpolation="1" value="81" row="0"/>
+			<key interpolation="0" value="1" row="1023"/>
+		</track>
+		<track name="zoom.grtind"/>
+		<track name="zoom.zpow">
+			<key interpolation="0" value="2" row="0"/>
+		</track>
+		<track name="zoom.zfactor">
+			<key interpolation="0" value="30" row="0"/>
+		</track>
+	</tracks>
+	<bookmarks/>
+</sync>
