@@ -82,7 +82,7 @@ $(ROMFS)/:
 %.ogg: %.mp3 $(ROMFS)/
 	./../tooling/convertmusic.sh $< $(ROMFS)/$@ $(BUILD)/music_meta.h
 
-%.ogg: %.ogg $(ROMFS)/
+%.ogg: %.oggi $(ROMFS)/
 	./../tooling/convertmusic.sh $< $(ROMFS)/$@ $(BUILD)/music_meta.h
 
 # FBX-to-bin with ufbxconv and 

@@ -4,7 +4,7 @@
 
 #include "music_meta.h"
 
-#define ROWS_PER_BEAT 8
+#define ROWS_PER_BEAT 4
 #define SAMPLES_PER_ROW (SONG_SPB / ROWS_PER_BEAT)
 
 #ifdef SYNC_PLAYER
@@ -17,7 +17,7 @@
 
 #define CHANNELS 2
 #define AUDIO_BUFSIZE (512 * CHANNELS)
-#define SONG_BPM 127.0
+#define SONG_BPM 136.36363636
 #define SONG_BPS (SONG_BPM / 60.0)
 #define SONG_SPS 32000
 #define SONG_SPB (SONG_SPS / SONG_BPS) 

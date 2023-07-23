@@ -49,7 +49,7 @@ void effectBillboardsInit() {
     }
 
     // Load a model
-    loadTexture(&texBase, NULL, "romfs:/tex_3ds_test.bin");
+    loadTexture(&texBase, NULL, "romfs:/tex_intro.bin");
     loadTexture(&texSky, &texSkyCube, "romfs:/sky_cube.bin");
     modelBillboard = loadFBXObject("romfs:/obj_billboards_billboard.vbo", &texBase, "billboards.frame");
     modelTrain = loadFBXObject("romfs:/obj_billboards_train.vbo", &texBase, "billboards.frame");

@@ -91,7 +91,16 @@ static const char* COMPOS[] = {
     "gravedigger,  ",
     "old&newschool ",
     "demo, wild,   ",
-    "fun compo!    ",
+    "fun compo,    ",
+    "nordlicht bbq,",
+    "breakfast,    ",
+    "cider,        ",
+    "party,        ",
+    "bigscreen,    ",
+    "september,    ",
+    "2023,         ",
+    "lichthaus,    ",
+    "bremen,       ",
     "trans rights! ",
 };
 
