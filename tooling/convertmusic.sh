@@ -5,5 +5,5 @@
 #rm temp.wav
 
 # much better: ogg
-ffmpeg -i $1 -ar 32000 -ab 192k $2
+ffmpeg -n -i $1 -ar 32000 -ab 192k $2
 echo "#define MUSIC_LEN_SEC $(ffprobe -i $2 -show_entries format=duration -v quiet -of csv="p=0")" > $3

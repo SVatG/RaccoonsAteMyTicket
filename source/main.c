@@ -82,13 +82,17 @@ extern void effectLichthausInit();
 extern void effectLichthausRender(C3D_RenderTarget* targetLeft, C3D_RenderTarget* targetRight, float row, float iod);
 extern void effectLichthausExit();
 
+extern void effectInfinizoomInit();
+extern void effectInfinizoomRender(C3D_RenderTarget* targetLeft, C3D_RenderTarget* targetRight, float row, float iod);
+extern void effectInfinizoomExit();
+
 int main() {
     bool DUMPFRAMES = false;
     bool DUMPFRAMES_3D = false;
     float DUMPFRAMES_3D_SEP = 0.4;
 
     // Set up effect list. Sequencing is done in Rocket
-    #define EFFECT_MAX 4
+    #define EFFECT_MAX 5
     effect effect_list[EFFECT_MAX];
 
     effect_list[0].init = effectIntroInit;
@@ -105,7 +109,11 @@ int main() {
 
     effect_list[3].init = effectLichthausInit;
     effect_list[3].render = effectLichthausRender;
-    effect_list[4].exit = effectLichthausExit;
+    effect_list[3].exit = effectLichthausExit;
+
+    effect_list[4].init = effectInfinizoomInit;
+    effect_list[4].render = effectInfinizoomRender;
+    effect_list[4].exit = effectInfinizoomExit;
 
     // Initialize graphics
     gfxInit(GSP_RGBA8_OES, GSP_BGR8_OES, false);
