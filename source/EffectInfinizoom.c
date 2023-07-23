@@ -121,7 +121,7 @@ void effectInfinizoomInit() {
 
     // usable values:
     // * camx = 10
-    // * camy = 3
+    // * camy = 30
     // * camz = -40
     // * camr = 12
     // * camth = 3.14
@@ -248,12 +248,14 @@ static void draw_zoom_stuff(float row, C3D_Mtx* baseview, C3D_Mtx* camMat) {
         zzz*=2;
 
         Mtx_Identity(&m3);
-        Mtx_Scale(&m3, rzoom,rzoom,rzoom);
-        Mtx_Translate(&m3, xoff, 0, zzz, false);
+        //Mtx_Scale(&m3, rzoom,rzoom,rzoom);
+        Mtx_Translate(&m3, xoff * rzoom, 0, -zzz * rzoom, false);
 
         C3D_Mtx* modelview = &mvmm[j+1];
         Mtx_Multiply(&m2, &m3, baseview);
         Mtx_Multiply(modelview, &m2, camMat);
+        Mtx_Scale(modelview, rzoom,rzoom,rzoom);
+
         C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, uLocModelview,  modelview);
 
         drawModel(&modelSignpost, row);
