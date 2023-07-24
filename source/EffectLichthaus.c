@@ -32,6 +32,9 @@ static fbxBasedObject modelRobo;
 static fbxBasedObject modelLichthaus;
 static fbxBasedObject camProxy;
 
+static const struct sync_track* syncOff;
+static const struct sync_track* syncSky;
+
 void effectLichthausInit() {
     // Prep general info: Shader (precompiled in main for important ceremonial reasons)
     C3D_BindProgram(&shaderProgramBones);
@@ -53,6 +56,9 @@ void effectLichthausInit() {
     modelRobo = loadFBXObject("romfs:/obj_robot_trainbot.vbo", &texBase, "lichthaus.frame");
     modelLichthaus = loadFBXObject("romfs:/obj_robot_lichthaus.vbo", &texBase, "lichthaus.frame");
     camProxy = loadFBXObject("romfs:/obj_robot_cam_proxy.vbo", &texBase, "lichthaus.camera");
+
+    syncOff = sync_get_track(rocket, "lichthaus.offset");
+    syncSky = sync_get_track(rocket, "lichthaus.sky");
 }
 
 // TODO: Split out shade setup
@@ -140,6 +146,9 @@ void effectLichthausRender(C3D_RenderTarget* targetLeft, C3D_RenderTarget* targe
     // Frame starts (TODO pull out?)   
     C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
  
+    float syncSkyVal = sync_get_val(syncSky, row);
+    float syncOffVal = sync_get_val(syncOff, row);
+
     // Send modelview 
     C3D_Mtx baseview;
     Mtx_Identity(&baseview);
@@ -150,7 +159,7 @@ void effectLichthausRender(C3D_RenderTarget* targetLeft, C3D_RenderTarget* targe
     Mtx_RotateX(&baseview, -M_PI / 2, true);
     Mtx_RotateY(&baseview, M_PI, true);
   
-    Mtx_Translate(&baseview, 0.0, 0.0, 0.0, true);
+    Mtx_Translate(&baseview, syncOffVal, 3.0, 0.3, true);
 
     C3D_Mtx camMat;
     getBoneMat(&camProxy, row, &camMat, 11);
@@ -158,11 +167,11 @@ void effectLichthausRender(C3D_RenderTarget* targetLeft, C3D_RenderTarget* targe
 
     C3D_Mtx modelview;
     Mtx_Multiply(&modelview, &baseview, &camMat);
-    Mtx_Scale(&modelview, 1.0, 1.0, 1.0);
+    Mtx_Scale(&modelview, 0.95, 0.95, 0.95);
 
     C3D_Mtx skyview;
     Mtx_Multiply(&skyview, &baseview, &camMat);
-    Mtx_RotateZ(&skyview, row * 0.05, true);
+    Mtx_RotateZ(&skyview, syncSkyVal, true);
 
      // Left eye 
     C3D_FrameDrawOn(targetLeft);  
