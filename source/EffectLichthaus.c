@@ -28,6 +28,7 @@ static int uLocBone[21];
 static C3D_Tex texBase;
 static C3D_Tex texSky;
 static C3D_TexCube texSkyCube;
+static fbxBasedObject modelRobo;
 static fbxBasedObject modelLichthaus;
 static fbxBasedObject camProxy;
 
@@ -47,10 +48,11 @@ void effectLichthausInit() {
     }
 
     // Load a model
-    loadTexture(&texBase, NULL, "romfs:/tex_3ds_test.bin");
+    loadTexture(&texBase, NULL, "romfs:/tex_licht.bin");
     loadTexture(&texSky, &texSkyCube, "romfs:/sky_cube.bin");
-    modelLichthaus = loadFBXObject("romfs:/obj_haus_lichthaus_vox.vbo", &texBase, "lichthaus.frame");
-    camProxy = loadFBXObject("romfs:/obj_haus_cam_proxy.vbo", &texBase, "lichthaus.camera");
+    modelRobo = loadFBXObject("romfs:/obj_robot_trainbot.vbo", &texBase, "lichthaus.frame");
+    modelLichthaus = loadFBXObject("romfs:/obj_robot_lichthaus.vbo", &texBase, "lichthaus.frame");
+    camProxy = loadFBXObject("romfs:/obj_robot_cam_proxy.vbo", &texBase, "lichthaus.camera");
 }
 
 // TODO: Split out shade setup
@@ -148,15 +150,15 @@ void effectLichthausRender(C3D_RenderTarget* targetLeft, C3D_RenderTarget* targe
     Mtx_RotateX(&baseview, -M_PI / 2, true);
     Mtx_RotateY(&baseview, M_PI, true);
   
-    //Mtx_Translate(&baseview, 0.0, 0.0, 0.0, true);
+    Mtx_Translate(&baseview, 0.0, 0.0, 0.0, true);
 
     C3D_Mtx camMat;
-    getBoneMat(&camProxy, row, &camMat, 0);
+    getBoneMat(&camProxy, row, &camMat, 11);
     Mtx_Inverse(&camMat);
 
     C3D_Mtx modelview;
     Mtx_Multiply(&modelview, &baseview, &camMat);
-    Mtx_Scale(&modelview, 0.5, 0.5, 0.5);
+    Mtx_Scale(&modelview, 1.0, 1.0, 1.0);
 
     C3D_Mtx skyview;
     Mtx_Multiply(&skyview, &baseview, &camMat);
@@ -172,6 +174,7 @@ void effectLichthausRender(C3D_RenderTarget* targetLeft, C3D_RenderTarget* targe
     C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, uLocModelview,  &modelview);
 
     // Dispatch drawcalls
+    drawModel(&modelRobo, row);
     drawModel(&modelLichthaus, row);
     skyboxCubeImmediate(&texSky, 1000.0f, vec3(0.0f, 0.0f, 0.0f), &skyview, &projection); 
 
@@ -189,6 +192,7 @@ void effectLichthausRender(C3D_RenderTarget* targetLeft, C3D_RenderTarget* targe
         C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, uLocModelview,  &modelview);
 
         // Dispatch drawcalls
+        drawModel(&modelRobo, row);
         drawModel(&modelLichthaus, row);
         skyboxCubeImmediate(&texSky, 1000.0f, vec3(0.0f, 0.0f, 0.0f), &skyview, &projection); 
 

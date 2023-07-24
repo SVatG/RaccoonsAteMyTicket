@@ -149,7 +149,7 @@ fbxBasedObject loadFBXObject(const char* filename, const char* objectName) {
             objectNew.frameCount = 0;
             if(scene->anim_stacks.count >= 1) {
                 if(scene->anim_stacks.count > 1) {
-                    printf("Warning: more than one animation stack, only the first will be used\n");
+                    printf("Warning: more than one animation stack (%ld), only the first will be used\n", scene->anim_stacks.count);
                 }
                 #ifdef DEBUG
                 printf("Loading animation\n");
