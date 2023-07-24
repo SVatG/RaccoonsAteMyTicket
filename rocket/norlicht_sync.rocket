@@ -1,0 +1,181 @@
+<sync rows="4096">
+	<tracks>
+		<track name="global.fade">
+			<key row="0" interpolation="1" value="1"/>
+			<key row="32" interpolation="0" value="0"/>
+			<key row="128" interpolation="0" value="0"/>
+			<key row="504" interpolation="1" value="0"/>
+			<key row="512" interpolation="0" value="1"/>
+			<key row="520" interpolation="1" value="1"/>
+			<key row="528" interpolation="0" value="0"/>
+			<key row="1165" interpolation="1" value="0"/>
+			<key row="1168" interpolation="1" value="1"/>
+			<key row="1171" interpolation="0" value="0"/>
+			<key row="1264" interpolation="1" value="0"/>
+			<key row="1288" interpolation="0" value="1"/>
+			<key row="1294" interpolation="1" value="1"/>
+			<key row="1296" interpolation="0" value="0"/>
+			<key row="1416" interpolation="1" value="0"/>
+			<key row="1424" interpolation="1" value="1"/>
+			<key row="1426" interpolation="0" value="0"/>
+			<key row="1544" interpolation="1" value="0"/>
+			<key row="1552" interpolation="1" value="1"/>
+			<key row="1554" interpolation="0" value="0"/>
+			<key row="1760" interpolation="1" value="0"/>
+			<key row="1800" interpolation="0" value="1"/>
+			<key row="1808" interpolation="1" value="1"/>
+			<key row="1818" interpolation="0" value="0"/>
+			<key row="2664" interpolation="1" value="0"/>
+			<key row="2696" interpolation="0" value="1"/>
+			<key row="2702" interpolation="1" value="1"/>
+			<key row="2704" interpolation="0" value="0"/>
+		</track>
+		<track name="global.effect">
+			<key row="0" interpolation="0" value="0"/>
+			<key row="512" interpolation="0" value="2"/>
+			<key row="1288" interpolation="0" value="1"/>
+			<key row="1800" interpolation="0" value="3"/>
+			<key row="2696" interpolation="0" value="4"/>
+		</track>
+		<track name="global.image"/>
+		<track name="intro.text.frame">
+			<key row="0" interpolation="0" value="0"/>
+			<key row="272" interpolation="0" value="3"/>
+			<key row="336" interpolation="0" value="5"/>
+			<key row="400" interpolation="0" value="7"/>
+		</track>
+		<track name="intro.cam.frame">
+			<key row="0" interpolation="0" value="20"/>
+			<key row="144" interpolation="2" value="20"/>
+			<key row="272" interpolation="1" value="2"/>
+			<key row="384" interpolation="2" value="10"/>
+			<key row="400" interpolation="1" value="20"/>
+			<key row="430" interpolation="0" value="22"/>
+			<key row="431" interpolation="0" value="10"/>
+		</track>
+		<track name="intro.cube.frame">
+			<key row="120" interpolation="1" value="0"/>
+			<key row="144" interpolation="0" value="30"/>
+		</track>
+		<track name="intro.train.frame">
+			<key row="144" interpolation="1" value="0"/>
+			<key row="255" interpolation="0" value="200"/>
+			<key row="256" interpolation="1" value="0"/>
+			<key row="288" interpolation="0" value="73"/>
+			<key row="320" interpolation="1" value="0"/>
+			<key row="352" interpolation="0" value="73"/>
+			<key row="384" interpolation="1" value="0"/>
+			<key row="416" interpolation="0" value="73"/>
+		</track>
+		<track name="intro.env.frame">
+			<key row="208" interpolation="2" value="0"/>
+			<key row="264" interpolation="0" value="40"/>
+		</track>
+		<track name="intro.zoom">
+			<key row="0" interpolation="1" value="-0.9"/>
+			<key row="144" interpolation="1" value="-0.8"/>
+			<key row="240" interpolation="0" value="-0.6"/>
+			<key row="384" interpolation="2" value="-0.6"/>
+			<key row="400" interpolation="0" value="0"/>
+			<key row="431" interpolation="1" value="-0.9"/>
+			<key row="528" interpolation="0" value="0.5"/>
+		</track>
+		<track name="intro.rot">
+			<key row="0" interpolation="1" value="0"/>
+			<key row="104" interpolation="2" value="1"/>
+			<key row="144" interpolation="2" value="20"/>
+			<key row="272" interpolation="0" value="22"/>
+		</track>
+		<track name="intro.sky">
+			<key row="0" interpolation="0" value="0"/>
+			<key row="144" interpolation="2" value="0"/>
+			<key row="272" interpolation="0" value="1.5"/>
+		</track>
+		<track name="lichthaus.frame.frame">
+			<key row="1808" interpolation="1" value="0"/>
+			<key row="2320" interpolation="1" value="1710"/>
+			<key row="2576" interpolation="1" value="2546"/>
+			<key row="2704" interpolation="0" value="2717"/>
+		</track>
+		<track name="lichthaus.camera.frame">
+			<key row="1808" interpolation="1" value="20"/>
+			<key row="1990" interpolation="1" value="600"/>
+			<key row="2008" interpolation="1" value="660"/>
+			<key row="2024" interpolation="1" value="700"/>
+			<key row="2063" interpolation="0" value="750"/>
+			<key row="2064" interpolation="1" value="1000"/>
+			<key row="2144" interpolation="1" value="854"/>
+			<key row="2191" interpolation="0" value="866"/>
+			<key row="2192" interpolation="1" value="1000"/>
+			<key row="2223" interpolation="1" value="1010"/>
+			<key row="2319" interpolation="1" value="1220"/>
+			<key row="2575" interpolation="0" value="1460"/>
+			<key row="2576" interpolation="2" value="2717"/>
+			<key row="2639" interpolation="0" value="2179"/>
+			<key row="2640" interpolation="2" value="1100"/>
+			<key row="2704" interpolation="0" value="1050"/>
+		</track>
+		<track name="signscroll.frame.frame">
+			<key row="520" interpolation="1" value="0"/>
+			<key row="784" interpolation="1" value="30"/>
+			<key row="984" interpolation="1" value="31.5"/>
+			<key row="1008" interpolation="1" value="40"/>
+			<key row="1167" interpolation="0" value="49"/>
+			<key row="1168" interpolation="1" value="51"/>
+			<key row="1296" interpolation="0" value="60"/>
+		</track>
+		<track name="signscroll.speed">
+			<key row="776" interpolation="0" value="15"/>
+			<key row="784" interpolation="1" value="0"/>
+			<key row="976" interpolation="0" value="12"/>
+			<key row="1000" interpolation="0" value="12"/>
+			<key row="1008" interpolation="1" value="13"/>
+			<key row="1136" interpolation="0" value="20.99"/>
+		</track>
+		<track name="signscroll.sky">
+			<key row="784" interpolation="1" value="0"/>
+			<key row="1136" interpolation="0" value="1"/>
+		</track>
+		<track name="billboards.frame.frame">
+			<key row="1288" interpolation="0" value="0"/>
+			<key row="1294" interpolation="1" value="0"/>
+			<key row="1328" interpolation="1" value="16"/>
+			<key row="1392" interpolation="1" value="18"/>
+			<key row="1423" interpolation="0" value="40"/>
+			<key row="1424" interpolation="1" value="41"/>
+			<key row="1456" interpolation="1" value="56"/>
+			<key row="1520" interpolation="1" value="60"/>
+			<key row="1551" interpolation="0" value="82"/>
+			<key row="1552" interpolation="1" value="83.9"/>
+			<key row="1584" interpolation="1" value="84"/>
+			<key row="1620" interpolation="1" value="94"/>
+			<key row="1680" interpolation="1" value="100"/>
+			<key row="1808" interpolation="0" value="120"/>
+		</track>
+		<track name="zoom.frame.frame"/>
+		<track name="zoom.text"/>
+		<track name="zoom.sky"/>
+		<track name="zoom.camx"/>
+		<track name="zoom.camy"/>
+		<track name="zoom.camz"/>
+		<track name="zoom.camr"/>
+		<track name="zoom.camth"/>
+		<track name="zoom.camph"/>
+		<track name="zoom.camrot"/>
+		<track name="zoom.zoom"/>
+		<track name="zoom.grtind"/>
+		<track name="zoom.zpow"/>
+		<track name="lichthaus.offset">
+			<key row="1808" interpolation="0" value="0"/>
+			<key row="2344" interpolation="2" value="0"/>
+			<key row="2376" interpolation="0" value="1"/>
+			<key row="2576" interpolation="1" value="-1"/>
+			<key row="2640" interpolation="1" value="1"/>
+			<key row="2664" interpolation="1" value="0.9"/>
+			<key row="2680" interpolation="1" value="1.5"/>
+			<key row="2704" interpolation="0" value="-1"/>
+		</track>
+		<track name="lichthaus.sky"/>
+	</tracks>
+	<bookmarks/>
+</sync>
