@@ -375,7 +375,7 @@ void effectInfinizoomRender(C3D_RenderTarget* targetLeft, C3D_RenderTarget* targ
     skyboxCubeImmediate(&texSky, 4000.0f, vec3(0.0f, 0.0f, 0.0f), &skyview, &projection);
 
     // Do fading
-    //fullscreenQuad(texFg, 0.0, 1.0);
+    fullscreenQuad(texFg, 0.0, 1.0);
     fade();
 
     // Right eye?
@@ -393,7 +393,7 @@ void effectInfinizoomRender(C3D_RenderTarget* targetLeft, C3D_RenderTarget* targ
         skyboxCubeImmediate(&texSky, 4000.0f, vec3(0.0f, 0.0f, 0.0f), &skyview, &projection);
 
         // Perform fading
-        //fullscreenQuad(texFg, 0.0, 1.0);
+        fullscreenQuad(texFg, 0.0, 1.0);
         fade();
     }
 
