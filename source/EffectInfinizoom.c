@@ -38,8 +38,9 @@ static const struct sync_track* syncSky;
 static const struct sync_track* sync_text;
 static const struct sync_track* sync_camx, *sync_camy, *sync_camz;
 static const struct sync_track* sync_camr, *sync_camth, *sync_camph;
-static const struct sync_track* sync_crot, *sync_zfactor;
-static const struct sync_track* sync_zoom, *sync_zoompow;
+static const struct sync_track* sync_crot;//, *sync_zfactor;
+static const struct sync_track* sync_zoom;//, *sync_zoompow;
+//static const struct sync_track* sync_cubex, *sync_cubey, *sync_cubez, *sync_cubeind;
 
 extern Font London40Regular;
 
@@ -148,17 +149,6 @@ void effectInfinizoomInit() {
     sync_text = sync_get_track(rocket, "zoom.text");
     syncSky = sync_get_track(rocket, "zoom.sky");
 
-    // usable values:
-    // * camx = 10
-    // * camy = 30
-    // * camz = -40
-    // * camr = 12
-    // * camth = 3.14
-    // * camph = 1.57
-    // * camrot = 0.1
-    // * zoom = 0..10 (linear)
-    // * grtind = 0..25 (linear)
-    // * zpow = 2
     sync_camx = sync_get_track(rocket, "zoom.camx" );
     sync_camy = sync_get_track(rocket, "zoom.camy" );
     sync_camz = sync_get_track(rocket, "zoom.camz" );
@@ -167,8 +157,13 @@ void effectInfinizoomInit() {
     sync_camph= sync_get_track(rocket, "zoom.camph");
     sync_crot = sync_get_track(rocket, "zoom.camrot");
     sync_zoom = sync_get_track(rocket, "zoom.zoom" );
-    sync_zoompow=sync_get_track(rocket, "zoom.zpow");
-    sync_zfactor=sync_get_track(rocket, "zoom.zfactor");
+    //sync_zoompow=sync_get_track(rocket, "zoom.zpow");
+    //sync_zfactor=sync_get_track(rocket, "zoom.zfactor");
+
+    /*sync_cubex = sync_get_track(rocket, "zoom.cubex");
+    sync_cubey = sync_get_track(rocket, "zoom.cubey");
+    sync_cubez = sync_get_track(rocket, "zoom.cubez");
+    sync_cubeind = sync_get_track(rocket, "zoom.cubeind");*/
 
     signSetStrings();
 }
@@ -255,40 +250,39 @@ static void drawModel(fbxBasedObject* model, float row) {
     C3D_DrawArrays(GPU_TRIANGLES, 0, model->vertCount);
 }
 
-static struct {
-	int ind;
-	C3D_FVec pos;
-} cubes[] = {
-	{ .ind = 76, .pos = { -0.6,0.5,0.75 } },
-	{ .ind = 75, .pos = { -0.6,-0.75,1 } },
-	{ .ind = 71, .pos = { -0.6,-1,-0.75 } },
-	{ .ind = 68, .pos = { -0.6,0.75,-0.5 } },
-	{ .ind = 64, .pos = { -0.5,-1.1,-0.95 } },
-	{ .ind = 60, .pos = { -0.5,0.7,0.55 } },
+static struct { int ind; vec3_t pos; } cubes[] = {
+    //{ .ind = 100, .pos = {0,0,0} },
 
-	{ .ind = 55, .pos = { -0.6,-0.75,1 } },
-	{ .ind = 51, .pos = { -0.6,-1,-0.75 } },
-	{ .ind = 43, .pos = { -0.5,-1.1,-0.95 } },
-	{ .ind = 39, .pos = { -0.6,0.5,0.75 } },
-	{ .ind = 35, .pos = { -0.6,0.75,-0.5 } },
-	{ .ind = 30, .pos = { -0.5,0.7,0.55 } },
+    { .ind = 40, .pos = { 1.4f, 1   , -4 } },
+    { .ind = 36, .pos = {-0.7f, 0.6f, -2 } },
+    { .ind = 30, .pos = { 0.4f, 1.2f, -2 } },
+    { .ind = 22, .pos = {-1   , 2.5f, -1 } },
+    { .ind = 17, .pos = { 0.5f, 1   , -3 } },
+    { .ind = 13, .pos = {-0.5f, 0.7f, -4 } },
+    { .ind = 12, .pos = {-1.1f, 1.2f, -3 } },
+    { .ind =  7, .pos = { 1   , 0.6f, -3 } },
+    { .ind =  3, .pos = {-0.15f,0.6f,  0 } },
 };
 
 static void draw_zoom_stuff(float row, C3D_Mtx* baseview, C3D_Mtx* camMat, C3D_Mtx* proj) {
-    float zlvlo = sync_get_val(sync_zoom, row), zpow = sync_get_val(sync_zoompow, row);
+    float zlvlo = sync_get_val(sync_zoom, row), zpow = 2;//sync_get_val(sync_zoompow, row);
     float zlvl=fmodf(zlvlo,1);
-    float zfactor= sync_get_val(sync_zfactor, row);
+    float zfactor= 30;//sync_get_val(sync_zfactor, row);
 
     float xoff = 0;
 
     C3D_Mtx m3, m2, m1, modelview;
+
+    /*cubes[0].ind = (int)sync_get_val(sync_cubeind, row);
+    cubes[0].pos.x = sync_get_val(sync_cubex, row);
+    cubes[0].pos.y = sync_get_val(sync_cubey, row);
+    cubes[0].pos.z = sync_get_val(sync_cubez, row);*/
 
     for (int i = -1; i <= 5; ++i) {
         if (!(i >= 0 && i < 30)) continue;
         int j = i;
 
         float rzoom = powf(zpow, -(zlvl+j));
-        //printf("rzoom=%f\n", rzoom);
 
         const float CCC = 0.98; float zzz=CCC;
         // I know, there's a closed-form version, but fuck it
@@ -315,7 +309,7 @@ static void draw_zoom_stuff(float row, C3D_Mtx* baseview, C3D_Mtx* camMat, C3D_M
 
             Mtx_Identity(&m3);
             //Mtx_Scale(&m3, rzoom,rzoom,rzoom);
-            Mtx_Translate(&m3, -cu.pos.x*rzoom*4, (cu.pos.y+1)*rzoom, (cu.pos.z+0.25f)*rzoom*4, false);
+            Mtx_Translate(&m3, -cu.pos.x*rzoom, cu.pos.y*rzoom, cu.pos.z*rzoom, false);
             //Mtx_Translate(&m3, xoff * rzoom, 0, -zzz * rzoom, false);
 
             Mtx_Multiply(&m2, &m3, baseview);
