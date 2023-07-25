@@ -251,4 +251,5 @@ void effectIntroExit() {
     freeFBXObject(&camProxy);
     C3D_TexDelete(&texIntro);
     C3D_TexDelete(&texSky);
+    C3D_TexDelete(&texFg);
 }

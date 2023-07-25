@@ -258,7 +258,7 @@ void effectSignScrollerRender(C3D_RenderTarget* targetLeft, C3D_RenderTarget* ta
     C3D_RenderTargetClear(targetLeft, C3D_CLEAR_ALL, 0x404040FF, 0);
 
     // Uniform setup
-    Mtx_PerspStereoTilt(&projection, 25.0f*M_PI/180.0f, 400.0f/240.0f, 0.01f, 12000.0f, -iod,  7.0f, false);
+    Mtx_PerspStereoTilt(&projection, 25.0f*M_PI/180.0f, 400.0f/240.0f, 0.01f, 6010.0f, -iod,  7.0f, false);
     C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, uLocProjection, &projection);
     C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, uLocModelview,  &modelview);
 
@@ -266,7 +266,7 @@ void effectSignScrollerRender(C3D_RenderTarget* targetLeft, C3D_RenderTarget* ta
     drawModel(&modelSignpost, row);
     drawModel(&modelSign, row);
     drawModel(&modelFloor, row);
-    skyboxCubeImmediate(&texSky, 4000.0f, vec3(0.0f, 0.0f, 0.0f), &skyview, &projection);
+    skyboxCubeImmediate(&texSky, 3000.0f, vec3(0.0f, 0.0f, 0.0f), &skyview, &projection);
 
     // Do fading
     fullscreenQuad(texFg, 0.0, 1.0);    
@@ -278,7 +278,7 @@ void effectSignScrollerRender(C3D_RenderTarget* targetLeft, C3D_RenderTarget* ta
         C3D_RenderTargetClear(targetRight, C3D_CLEAR_ALL, 0x00ff00FF, 0);
 
         // Uniform setup
-        Mtx_PerspStereoTilt(&projection, 25.0f*M_PI/180.0f, 400.0f/240.0f, 0.01f, 12000.0f, iod, 7.0f, false);
+        Mtx_PerspStereoTilt(&projection, 25.0f*M_PI/180.0f, 400.0f/240.0f, 0.01f, 6010.0f, iod, 7.0f, false);
         C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, uLocProjection, &projection);
         C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, uLocModelview,  &modelview);
 
@@ -286,7 +286,7 @@ void effectSignScrollerRender(C3D_RenderTarget* targetLeft, C3D_RenderTarget* ta
         drawModel(&modelSignpost, row);
         drawModel(&modelSign, row);
         drawModel(&modelFloor, row);
-        skyboxCubeImmediate(&texSky, 4000.0f, vec3(0.0f, 0.0f, 0.0f), &skyview, &projection);
+        skyboxCubeImmediate(&texSky, 3000.0f, vec3(0.0f, 0.0f, 0.0f), &skyview, &projection);
 
         // Perform fading
         fullscreenQuad(texFg, 0.0, 1.0);
@@ -307,4 +307,5 @@ void effectSignScrollerExit() {
     C3D_TexDelete(&texBase);
     C3D_TexDelete(&texSky);
     C3D_TexDelete(&texFg);
+    C3D_TexDelete(&texScroll);
 }

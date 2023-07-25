@@ -40,6 +40,7 @@ static const struct sync_track* sync_camx, *sync_camy, *sync_camz;
 static const struct sync_track* sync_camr, *sync_camth, *sync_camph;
 static const struct sync_track* sync_crot;//, *sync_zfactor;
 static const struct sync_track* sync_zoom;//, *sync_zoompow;
+static const struct sync_track* sync_rotmul;
 //static const struct sync_track* sync_cubex, *sync_cubey, *sync_cubez, *sync_cubeind;
 
 extern Font London40Regular;
@@ -138,10 +139,10 @@ void effectInfinizoomInit() {
     fontFlushToGPU();*/
 
     // Load a model
-    loadTexture(&texCube, NULL, "romfs:/tex_3ds_test.bin");
+    loadTexture(&texCube, NULL, "romfs:/tex_licht.bin");
     loadTexture(&texBase, NULL, "romfs:/tex_signpost.bin");
-    loadTexture(&texSky, &texSkyCube, "romfs:/sky_cube.bin");
-    loadTexture(&texFg, NULL, "romfs:/tex_fg2.bin");
+    loadTexture(&texSky, &texSkyCube, "romfs:/sky_cube2.bin");
+    loadTexture(&texFg, NULL, "romfs:/tex_fg4.bin");
     modelSignpost = loadFBXObject("romfs:/obj_signpost_sign_post.vbo", &texBase, "zoom.frame");
     modelSign = loadFBXObject("romfs:/obj_signpost_sign_signs.vbo", &texScroll, "zoom.frame");
     modelCube = loadFBXObject("romfs:/obj_cube_cube.vbo", &texCube, "zoom.frame");
@@ -157,7 +158,7 @@ void effectInfinizoomInit() {
     sync_camph= sync_get_track(rocket, "zoom.camph");
     sync_crot = sync_get_track(rocket, "zoom.camrot");
     sync_zoom = sync_get_track(rocket, "zoom.zoom" );
-    //sync_zoompow=sync_get_track(rocket, "zoom.zpow");
+    sync_rotmul = sync_get_track(rocket, "zoom.rotmul");
     //sync_zfactor=sync_get_track(rocket, "zoom.zfactor");
 
     /*sync_cubex = sync_get_track(rocket, "zoom.cubex");
@@ -170,9 +171,6 @@ void effectInfinizoomInit() {
 
 // TODO: Split out shade setup
 static void drawModel(fbxBasedObject* model, float row) {
-    // Update bone mats
-    setBonesFromSync(model, uLocBone, row);
-
     // Set up attribute info
     C3D_AttrInfo* attrInfo = C3D_GetAttrInfo();
     AttrInfo_Init(attrInfo);
@@ -194,6 +192,25 @@ static void drawModel(fbxBasedObject* model, float row) {
     C3D_TexBind(0, model->tex);
     C3D_TexSetFilter(model->tex, GPU_LINEAR, GPU_LINEAR);
 
+    // Actual drawcall
+    C3D_DrawArrays(GPU_TRIANGLES, 0, model->vertCount);
+}
+
+static struct { int ind; vec3_t pos; } cubes[] = {
+    //{ .ind = 100, .pos = {0,0,0} },
+
+    { .ind = 40, .pos = { 1.4f, 1   , -4 } },
+    { .ind = 36, .pos = {-0.7f, 0.6f, -2 } },
+    { .ind = 30, .pos = { 0.4f, 1.2f, -2 } },
+    { .ind = 22, .pos = {-1   , 2.5f, -1 } },
+    { .ind = 17, .pos = { 0.5f, 1   , -3 } },
+    { .ind = 13, .pos = {-0.5f, 0.7f, -4 } },
+    { .ind = 12, .pos = {-1.1f, 1.2f, -3 } },
+    { .ind =  7, .pos = { 1   , 0.6f, -3 } },
+    { .ind =  3, .pos = {-0.15f,0.6f,  0 } },
+};
+
+static void draw_zoom_stuff(float row, C3D_Mtx* baseview, C3D_Mtx* camMat, C3D_Mtx* proj) {
     // Set up lighting
     C3D_LightEnvInit(&lightEnv);
     C3D_LightEnvBind(&lightEnv);
@@ -246,29 +263,11 @@ static void drawModel(fbxBasedObject* model, float row) {
     C3D_CullFace(GPU_CULL_BACK_CCW);
     C3D_AlphaBlend(GPU_BLEND_ADD, GPU_BLEND_ADD, GPU_SRC_ALPHA, GPU_ONE_MINUS_SRC_ALPHA, GPU_SRC_ALPHA, GPU_ONE_MINUS_SRC_ALPHA);
 
-    // Actual drawcall
-    C3D_DrawArrays(GPU_TRIANGLES, 0, model->vertCount);
-}
-
-static struct { int ind; vec3_t pos; } cubes[] = {
-    //{ .ind = 100, .pos = {0,0,0} },
-
-    { .ind = 40, .pos = { 1.4f, 1   , -4 } },
-    { .ind = 36, .pos = {-0.7f, 0.6f, -2 } },
-    { .ind = 30, .pos = { 0.4f, 1.2f, -2 } },
-    { .ind = 22, .pos = {-1   , 2.5f, -1 } },
-    { .ind = 17, .pos = { 0.5f, 1   , -3 } },
-    { .ind = 13, .pos = {-0.5f, 0.7f, -4 } },
-    { .ind = 12, .pos = {-1.1f, 1.2f, -3 } },
-    { .ind =  7, .pos = { 1   , 0.6f, -3 } },
-    { .ind =  3, .pos = {-0.15f,0.6f,  0 } },
-};
-
-static void draw_zoom_stuff(float row, C3D_Mtx* baseview, C3D_Mtx* camMat, C3D_Mtx* proj) {
-    float zlvlo = sync_get_val(sync_zoom, row), zpow = 2;//sync_get_val(sync_zoompow, row);
+    // Drawing
+    float zlvlo = sync_get_val(sync_zoom, row), zpow = 2.0;//sync_get_val(sync_zoompow, row);
     float zlvl=fmodf(zlvlo,1);
     float zfactor= 30;//sync_get_val(sync_zfactor, row);
-
+    float rotmul = sync_get_val(sync_rotmul, row);
     float xoff = 0;
 
     C3D_Mtx m3, m2, m1, modelview;
@@ -277,6 +276,9 @@ static void draw_zoom_stuff(float row, C3D_Mtx* baseview, C3D_Mtx* camMat, C3D_M
     cubes[0].pos.x = sync_get_val(sync_cubex, row);
     cubes[0].pos.y = sync_get_val(sync_cubey, row);
     cubes[0].pos.z = sync_get_val(sync_cubez, row);*/
+
+    setBonesFromSync(&modelSign, uLocBone, 0.0);
+    setBonesFromSync(&modelSignpost, uLocBone, 0.0);
 
     for (int i = -1; i <= 5; ++i) {
         if (!(i >= 0 && i < 30)) continue;
@@ -292,7 +294,7 @@ static void draw_zoom_stuff(float row, C3D_Mtx* baseview, C3D_Mtx* camMat, C3D_M
         Mtx_Identity(&m3);
         //Mtx_Scale(&m3, rzoom,rzoom,rzoom);
         Mtx_Translate(&m3, xoff * rzoom, -3*rzoom, -zzz * rzoom, false);
-
+        Mtx_RotateZ(&m3, rzoom * rotmul, true);
         Mtx_Multiply(&m2, &m3, baseview);
         Mtx_Multiply(&modelview, &m2, camMat);
         Mtx_Scale(&modelview, rzoom,rzoom,rzoom);
@@ -301,24 +303,28 @@ static void draw_zoom_stuff(float row, C3D_Mtx* baseview, C3D_Mtx* camMat, C3D_M
 
         drawModel(&modelSignpost, row);
         drawModel(&modelSign, row);
+        
+        
+    }
 
-        for (size_t k = 0; k < sizeof(cubes)/sizeof(cubes[0]); ++k) {
-            __auto_type cu = cubes[k];
-            rzoom = powf(zpow, -(zlvlo-cu.ind));
-            if (rzoom < 0.01 || rzoom >= 20) continue;
+    setBonesFromSync(&modelCube, uLocBone, 0.0);
+    for (size_t k = 0; k < sizeof(cubes)/sizeof(cubes[0]); ++k) {
+        __auto_type cu = cubes[k];
+        float rzoom = powf(zpow, -(zlvlo-cu.ind));
+        if (rzoom < 0.01 || rzoom >= 20) continue;
 
-            Mtx_Identity(&m3);
-            //Mtx_Scale(&m3, rzoom,rzoom,rzoom);
-            Mtx_Translate(&m3, -cu.pos.x*rzoom, cu.pos.y*rzoom, cu.pos.z*rzoom, false);
-            //Mtx_Translate(&m3, xoff * rzoom, 0, -zzz * rzoom, false);
+        Mtx_Identity(&m3);
+        //Mtx_Scale(&m3, rzoom,rzoom,rzoom);
+        Mtx_Translate(&m3, -cu.pos.x*rzoom, cu.pos.y*rzoom, cu.pos.z*rzoom, false);
+        Mtx_RotateZ(&m3, rzoom * rotmul, true);
+        //Mtx_Translate(&m3, xoff * rzoom, 0, -zzz * rzoom, false);
 
-            Mtx_Multiply(&m2, &m3, baseview);
-            Mtx_Multiply(&modelview, &m2, camMat);
-            Mtx_Scale(&modelview, rzoom*0.25,rzoom*0.25,rzoom*0.25);
+        Mtx_Multiply(&m2, &m3, baseview);
+        Mtx_Multiply(&modelview, &m2, camMat);
+        Mtx_Scale(&modelview, rzoom*0.25,rzoom*0.25,rzoom*0.25);
 
-            C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, uLocModelview,  &modelview);
-            drawModel(&modelCube, row);
-        }
+        C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, uLocModelview,  &modelview);
+        drawModel(&modelCube, row);
     }
 }
 
@@ -372,7 +378,7 @@ void effectInfinizoomRender(C3D_RenderTarget* targetLeft, C3D_RenderTarget* targ
 
     // Dispatch drawcalls
     draw_zoom_stuff(row, &baseview, &camMat, &projection);
-    skyboxCubeImmediate(&texSky, 4000.0f, vec3(0.0f, 0.0f, 0.0f), &skyview, &projection);
+    skyboxCubeImmediate(&texSky, 300.0f, vec3(0.0f, 0.0f, 0.0f), &skyview, &projection);
 
     // Do fading
     fullscreenQuad(texFg, 0.0, 1.0);
@@ -390,7 +396,7 @@ void effectInfinizoomRender(C3D_RenderTarget* targetLeft, C3D_RenderTarget* targ
 
         // Dispatch drawcalls
         draw_zoom_stuff(row, &baseview, &camMat, &projection);
-        skyboxCubeImmediate(&texSky, 4000.0f, vec3(0.0f, 0.0f, 0.0f), &skyview, &projection);
+        skyboxCubeImmediate(&texSky, 300.0f, vec3(0.0f, 0.0f, 0.0f), &skyview, &projection);
 
         // Perform fading
         fullscreenQuad(texFg, 0.0, 1.0);
@@ -406,8 +412,10 @@ void effectInfinizoomExit() {
     linearFree(textpx);
     freeFBXObject(&modelSignpost);
     freeFBXObject(&modelSign);
+    freeFBXObject(&modelCube);
     C3D_TexDelete(&texCube);
     C3D_TexDelete(&texBase);
     C3D_TexDelete(&texSky);
     C3D_TexDelete(&texFg);
+    C3D_TexDelete(&texScroll);
 }

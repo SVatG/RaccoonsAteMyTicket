@@ -86,13 +86,17 @@ extern void effectInfinizoomInit();
 extern void effectInfinizoomRender(C3D_RenderTarget* targetLeft, C3D_RenderTarget* targetRight, float row, float iod);
 extern void effectInfinizoomExit();
 
+extern void effectSlideInit();
+extern void effectSlideRender(C3D_RenderTarget* targetLeft, C3D_RenderTarget* targetRight, float row, float iod);
+extern void effectSlideExit();
+
 int main() {
     bool DUMPFRAMES = false;
     bool DUMPFRAMES_3D = false;
     float DUMPFRAMES_3D_SEP = 0.4;
 
     // Set up effect list. Sequencing is done in Rocket
-    #define EFFECT_MAX 5
+    #define EFFECT_MAX 6
     effect effect_list[EFFECT_MAX];
 
     effect_list[0].init = effectIntroInit;
@@ -114,6 +118,10 @@ int main() {
     effect_list[4].init = effectInfinizoomInit;
     effect_list[4].render = effectInfinizoomRender;
     effect_list[4].exit = effectInfinizoomExit;
+
+    effect_list[5].init = effectSlideInit;
+    effect_list[5].render = effectSlideRender;
+    effect_list[5].exit = effectSlideExit;
 
     // Initialize graphics
     gfxInit(GSP_RGBA8_OES, GSP_BGR8_OES, false);

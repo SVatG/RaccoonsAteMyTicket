@@ -28,6 +28,7 @@ static int uLocBone[21];
 static C3D_Tex texBase;
 static C3D_Tex texSky;
 static C3D_TexCube texSkyCube;
+static C3D_Tex texFg;
 static fbxBasedObject modelBillboard;
 static fbxBasedObject modelTrain;
 static fbxBasedObject modelFloor;
@@ -55,6 +56,7 @@ void effectBillboardsInit() {
     modelTrain = loadFBXObject("romfs:/obj_billboards_train.vbo", &texBase, "billboards.frame");
     modelFloor = loadFBXObject("romfs:/obj_billboards_floor.vbo", &texBase, "billboards.frame");
     camProxy = loadFBXObject("romfs:/obj_billboards_cam_proxy.vbo", &texBase, "billboards.frame");
+    loadTexture(&texFg, NULL, "romfs:/tex_fg3.bin");
 }
 
 // TODO: Split out shade setup
@@ -181,6 +183,7 @@ void effectBillboardsRender(C3D_RenderTarget* targetLeft, C3D_RenderTarget* targ
     skyboxCubeImmediate(&texSky, 1000.0f, vec3(0.0f, 0.0f, 0.0f), &skyview, &projection); 
 
     // Do fading
+    fullscreenQuad(texFg, 0.0, 1.0);
     fade();
 
     // Right eye?
@@ -200,6 +203,7 @@ void effectBillboardsRender(C3D_RenderTarget* targetLeft, C3D_RenderTarget* targ
         skyboxCubeImmediate(&texSky, 1000.0f, vec3(0.0f, 0.0f, 0.0f), &skyview, &projection); 
 
         // Perform fading
+        fullscreenQuad(texFg, 0.0, 1.0);
         fade();
     } 
 
@@ -215,4 +219,5 @@ void effectBillboardsExit() {
     freeFBXObject(&camProxy);
     C3D_TexDelete(&texBase);
     C3D_TexDelete(&texSky);
+    C3D_TexDelete(&texFg);
 }

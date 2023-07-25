@@ -27,6 +27,7 @@ static int uLocBone[21];
 
 static C3D_Tex texBase;
 static C3D_Tex texSky;
+static C3D_Tex texFg;
 static C3D_TexCube texSkyCube;
 static fbxBasedObject modelRobo;
 static fbxBasedObject modelLichthaus;
@@ -59,6 +60,8 @@ void effectLichthausInit() {
 
     syncOff = sync_get_track(rocket, "lichthaus.offset");
     syncSky = sync_get_track(rocket, "lichthaus.sky");
+
+    loadTexture(&texFg, NULL, "romfs:/tex_fg5.bin");
 }
 
 // TODO: Split out shade setup
@@ -188,6 +191,7 @@ void effectLichthausRender(C3D_RenderTarget* targetLeft, C3D_RenderTarget* targe
     skyboxCubeImmediate(&texSky, 1000.0f, vec3(0.0f, 0.0f, 0.0f), &skyview, &projection); 
 
     // Do fading
+    fullscreenQuad(texFg, 0.0, 1.0);
     fade();
 
     // Right eye?
@@ -206,6 +210,7 @@ void effectLichthausRender(C3D_RenderTarget* targetLeft, C3D_RenderTarget* targe
         skyboxCubeImmediate(&texSky, 1000.0f, vec3(0.0f, 0.0f, 0.0f), &skyview, &projection); 
 
         // Perform fading
+        fullscreenQuad(texFg, 0.0, 1.0);
         fade();
     } 
 
@@ -219,4 +224,5 @@ void effectLichthausExit() {
     freeFBXObject(&camProxy);
     C3D_TexDelete(&texBase);
     C3D_TexDelete(&texSky);
+    C3D_TexDelete(&texFg);
 }
