@@ -140,8 +140,6 @@ int main() {
     int r = audio_init_preload();
     if (r != 0) return r;
 
-    printf("Demobeginn imminent.\n");
-
     // Rocket startup
 #ifndef SYNC_PLAYER
     printf("Now socketing...\n");
@@ -192,6 +190,19 @@ int main() {
     }
 #endif
 
+    printf("\n");
+    printf(" Nordlicht 2023\n");
+    printf(" =================\n");
+    printf("\n");
+    printf("     NORDLICHT EXPRESS\n");
+    printf("   __________________________________\n");
+    printf("  /__/    |___|   |   |___|   |___|  |\n");
+    printf(" |________________|__________________|\n");
+    printf("   o--o      o--o   o--o        o--o \n");
+    printf(" \n");
+    printf(" 8th to 10th September 2023\n");
+    printf(" Bremen, Germany\n");
+
     const struct sync_track* sync_fade = sync_get_track(rocket, "global.fade");
     const struct sync_track* sync_effect = sync_get_track(rocket, "global.effect");;    
     const struct sync_track* sync_img = sync_get_track(rocket, "global.image");
@@ -231,7 +242,6 @@ int main() {
             new_effect = EFFECT_MAX - 1;
         }
         if(new_effect != -1 && new_effect != current_effect) {
-            printf("effect switch %d -> %d\n", current_effect, new_effect);
             effect_list[current_effect].exit();
             current_effect = new_effect;
             effect_list[current_effect].init();

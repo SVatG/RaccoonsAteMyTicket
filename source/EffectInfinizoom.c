@@ -98,16 +98,37 @@ static void fontFlushToGPU(void) {
             (u32*)texScroll.data, GX_BUFFER_DIM(TEXTSIZE, TEXTSIZE), TEXTURE_TRANSFER_FLAGS);
     gspWaitForPPF();
 }
-static void signSetStrings(void) {
+static int current_text_frame = -1;
+static void signSetStrings(float row) {
+    int text_frame = sync_get_val(sync_text, row);
     ClearBitmap(&textmap);
-    fontRender(SCREEN00, "September 8-10");
-    fontRender(SCREEN01, "Nordlicht 2023");
-    fontRender(SCREEN10, "Lichthaus");
-    fontRender(SCREEN11, "Bremen Germany");
-    fontRender(SCREEN20, "September 8-10");
-    fontRender(SCREEN21, "Nordlicht 2023");
-    fontRender(SCREEN30, "Lichthaus");
-    fontRender(SCREEN31, "Bremen Germany");
+    if(current_text_frame == text_frame) {
+        return;
+    }
+    current_text_frame = text_frame;
+    if(text_frame == 0) {
+        fontRender(SCREEN20, "            code");
+        fontRender(SCREEN21, "           halcy");
+        fontRender(SCREEN30, "code");
+        fontRender(SCREEN31, "pcy");
+    }
+    if(text_frame == 1) {
+        fontRender(SCREEN20, "             gfx");
+        fontRender(SCREEN21, "          violet");
+        fontRender(SCREEN30, "gfx     gfx");
+        fontRender(SCREEN31, "dot   halcy");
+    }
+    if(text_frame == 2) {
+        fontRender(SCREEN20, "           music");
+        fontRender(SCREEN21, "     Saga_Musix");
+    }
+    if(text_frame == 3) {
+        fontRender(SCREEN20, "September 8-10");
+        fontRender(SCREEN21, "Nordlicht 2023");
+        fontRender(SCREEN30, "Lichthaus");
+        fontRender(SCREEN31, "Bremen Germany");
+    }
+    
     fontFlushToGPU();
 }
 
@@ -166,7 +187,7 @@ void effectInfinizoomInit() {
     sync_cubez = sync_get_track(rocket, "zoom.cubez");
     sync_cubeind = sync_get_track(rocket, "zoom.cubeind");*/
 
-    signSetStrings();
+    signSetStrings(0);
 }
 
 // TODO: Split out shade setup
@@ -329,6 +350,8 @@ static void draw_zoom_stuff(float row, C3D_Mtx* baseview, C3D_Mtx* camMat, C3D_M
 }
 
 void effectInfinizoomRender(C3D_RenderTarget* targetLeft, C3D_RenderTarget* targetRight, float row, float iod) {
+    signSetStrings(row);
+
     // Frame starts (TODO pull out?)
     C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
 

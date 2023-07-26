@@ -149,12 +149,24 @@ fbxBasedObject loadFBXObject(const char* filename, const char* objectName) {
             objectNew.frameCount = 0;
             if(scene->anim_stacks.count >= 1) {
                 if(scene->anim_stacks.count > 1) {
-                    printf("Warning: more than one animation stack (%ld), only the first will be used\n", scene->anim_stacks.count);
+                    printf("Warning: more than one animation stack (%ld), only the longest will be used\n", scene->anim_stacks.count);
                 }
+
+                int stack_use = 0;
+                int stack_frames = 0;
+                for(int i = scene->anim_stacks.count - 1; i >= 0; i--) {
+                    ufbx_anim_stack* anim_stack = scene->anim_stacks.data[i];
+                    int frames = (int)((anim_stack->anim.time_end - anim_stack->anim.time_begin) / (1.0 / 60.0) + 0.5);
+                    if(frames > stack_frames) {
+                        stack_use = i;
+                        stack_frames = frames;
+                    }
+                }
+
                 #ifdef DEBUG
                 printf("Loading animation\n");
                 #endif
-                ufbx_anim_stack* anim_stack = scene->anim_stacks.data[0];
+                ufbx_anim_stack* anim_stack = scene->anim_stacks.data[stack_use];
 
                 // We sample at 60fps
                 float frameDur = 1.0 / 60.0;

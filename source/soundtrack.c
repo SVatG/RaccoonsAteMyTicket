@@ -43,7 +43,7 @@ static bool music_preload(u32 need_at_least) {
         long bytes = ov_read(&vorbis, &audio_preload[readBytes], MUSIC_SIZE, 0, 2, 1, &section);
         //printf("bytes read = %ld\n", bytes);
         if (bytes <= 0) {
-            printf("music ended\n");
+            //printf("music ended\n");
             end_reached = true;
             return false;
         }
@@ -74,7 +74,7 @@ void audio_pause(void *ignored, int flag) {
 
 #ifndef SYNC_PLAYER
 void audio_set_row(void *ignored, int row) {
-    printf("Set row: %d\n", row);
+    //printf("Set row: %d\n", row);
     ignored;
     sample_pos = row * SAMPLES_PER_ROW;
 }
@@ -103,7 +103,7 @@ static void audio_thread(void* bleh) {
     //printf("Ogg file %d Hz, %d channels, %d kbit/s, total audio data %d bytes.\n", info->rate, info->channels, info->bitrate_nominal / 1024, MUSIC_SIZE);
 
     music_preload(5*AUDIO_BLOCKSIZE);
-    printf("audio preload ready\n");
+    //printf("audio preload ready\n");
 
     while (!thread_quit) {
         __asm__ volatile("":::"memory");
@@ -112,7 +112,7 @@ static void audio_thread(void* bleh) {
         //printf("read=%ld play=%ld\n", readBytes, playBytes);
         if (!music_preload(0)) break;
     }
-    printf("audio thread done!\n");
+    //printf("audio thread done!\n");
 }
 
 
@@ -149,7 +149,7 @@ int audio_init_preload(void) {
     if (prio < 0x18) prio = 0x18;
     if (prio > 0x3f) prio = 0x3f;
     thread = threadCreate(audio_thread, NULL, THREAD_STACKSZ, prio, THREAD_AFFINITY, false);
-    printf("created audio thread %p\n", thread);
+    //printf("created audio thread %p\n", thread);
 
     return 0;
 }

@@ -594,7 +594,7 @@ fbxBasedObject loadFBXObject(const char* filename, C3D_Tex* texture, const char*
     fread(&vertCount, sizeof(int32_t), 1, fp);
     fread(&boneCount, sizeof(int32_t), 1, fp);
     fread(&frameCount, sizeof(int32_t), 1, fp);
-    printf("Loaded %d verts, %d bones, %d frames\n", vertCount, boneCount, frameCount);
+    //printf("Loaded %d verts, %d bones, %d frames\n", vertCount, boneCount, frameCount);
     
     // Allocate memory for the object
     fbxBasedObject object;
@@ -627,7 +627,7 @@ void freeFBXObject(fbxBasedObject* object) {
     free(object->animFrames);
 }
 
-inline static void skyboxQuadImmediate(vec3_t a, vec3_t b, vec3_t c, vec3_t d) {
+inline void skyboxQuadImmediate(vec3_t a, vec3_t b, vec3_t c, vec3_t d) {
     C3D_ImmSendAttrib(a.x, a.y, a.z, 0.0f);
     C3D_ImmSendAttrib(b.x, b.y, b.z, 0.0f);
     C3D_ImmSendAttrib(c.x, c.y, c.z, 0.0f);

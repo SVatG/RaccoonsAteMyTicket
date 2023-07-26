@@ -32,7 +32,9 @@ static C3D_TexCube texSkyCube;
 static C3D_Tex texFg;
 static fbxBasedObject modelSignpost;
 static fbxBasedObject modelSign;
+static fbxBasedObject modelHand;
 static fbxBasedObject modelFloor;
+static fbxBasedObject modelTrain;
 static fbxBasedObject camProxy;
 
 static const struct sync_track* syncText;
@@ -137,7 +139,9 @@ void effectSignScrollerInit() {
     loadTexture(&texFg, NULL, "romfs:/tex_fg2.bin");
     modelSignpost = loadFBXObject("romfs:/obj_signpost_sign_post.vbo", &texBase, "signscroll.frame");
     modelSign = loadFBXObject("romfs:/obj_signpost_sign_signs.vbo", &texScroll, "signscroll.frame");
+    modelHand = loadFBXObject("romfs:/obj_signpost_hand.vbo", &texBase, "signscroll.hand");
     modelFloor = loadFBXObject("romfs:/obj_signpost_floor.vbo", &texBase, "signscroll.frame");
+    modelTrain = loadFBXObject("romfs:/obj_signpost_train.vbo", &texBase, "signscroll.frame");
     camProxy = loadFBXObject("romfs:/obj_signpost_cam_proxy.vbo", NULL, "signscroll.frame");
     syncText = sync_get_track(rocket, "signscroll.speed");
     syncSky = sync_get_track(rocket, "signscroll.sky");
@@ -252,13 +256,22 @@ void effectSignScrollerRender(C3D_RenderTarget* targetLeft, C3D_RenderTarget* ta
     float skyRot = sync_get_val(syncSky, row);
     Mtx_Multiply(&skyview, &baseview, &camMat);
     Mtx_RotateZ(&skyview, skyRot, true);
+    
+    skyview.m[0] = 0.0f;
+    skyview.m[4] = 0.0f;
+    skyview.m[8] = 0.0f;
 
      // Left eye
     C3D_FrameDrawOn(targetLeft);
     C3D_RenderTargetClear(targetLeft, C3D_CLEAR_ALL, 0x404040FF, 0);
 
+    float zfar = 5010.0f;
+    if(row > 1200.0f) {
+        zfar = 5000.0f;
+    }
+
     // Uniform setup
-    Mtx_PerspStereoTilt(&projection, 25.0f*M_PI/180.0f, 400.0f/240.0f, 0.01f, 6010.0f, -iod,  7.0f, false);
+    Mtx_PerspStereoTilt(&projection, 25.0f*M_PI/180.0f, 400.0f/240.0f, 0.01f, zfar, -iod,  7.0f, false);
     C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, uLocProjection, &projection);
     C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, uLocModelview,  &modelview);
 
@@ -266,7 +279,16 @@ void effectSignScrollerRender(C3D_RenderTarget* targetLeft, C3D_RenderTarget* ta
     drawModel(&modelSignpost, row);
     drawModel(&modelSign, row);
     drawModel(&modelFloor, row);
-    skyboxCubeImmediate(&texSky, 3000.0f, vec3(0.0f, 0.0f, 0.0f), &skyview, &projection);
+    drawModel(&modelHand, row);
+    drawModel(&modelTrain, row);
+    if(row < 1200.0f) {
+        if(row < 900.0f) {
+            skyboxCubeImmediate(&texSky, 3000.0f, vec3(0.0f, 0.0f, 0.0f), &skyview, &projection);
+        }
+        else {
+            skyboxCubeImmediate(&texSky, 1500.0f, vec3(0.0f, 0.0f, 0.0f), &skyview, &projection);
+        }
+    }
 
     // Do fading
     fullscreenQuad(texFg, 0.0, 1.0);    
@@ -278,7 +300,7 @@ void effectSignScrollerRender(C3D_RenderTarget* targetLeft, C3D_RenderTarget* ta
         C3D_RenderTargetClear(targetRight, C3D_CLEAR_ALL, 0x00ff00FF, 0);
 
         // Uniform setup
-        Mtx_PerspStereoTilt(&projection, 25.0f*M_PI/180.0f, 400.0f/240.0f, 0.01f, 6010.0f, iod, 7.0f, false);
+        Mtx_PerspStereoTilt(&projection, 25.0f*M_PI/180.0f, 400.0f/240.0f, 0.01f, zfar, iod, 7.0f, false);
         C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, uLocProjection, &projection);
         C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, uLocModelview,  &modelview);
 
@@ -286,7 +308,16 @@ void effectSignScrollerRender(C3D_RenderTarget* targetLeft, C3D_RenderTarget* ta
         drawModel(&modelSignpost, row);
         drawModel(&modelSign, row);
         drawModel(&modelFloor, row);
-        skyboxCubeImmediate(&texSky, 3000.0f, vec3(0.0f, 0.0f, 0.0f), &skyview, &projection);
+        drawModel(&modelHand, row);
+        drawModel(&modelTrain, row);
+        if(row < 1200.0f) {
+            if(row < 900.0f) {
+                skyboxCubeImmediate(&texSky, 3000.0f, vec3(0.0f, 0.0f, 0.0f), &skyview, &projection);
+            }
+            else {
+                skyboxCubeImmediate(&texSky, 1500.0f, vec3(0.0f, 0.0f, 0.0f), &skyview, &projection);
+            }
+        }
 
         // Perform fading
         fullscreenQuad(texFg, 0.0, 1.0);
@@ -303,6 +334,8 @@ void effectSignScrollerExit() {
     freeFBXObject(&modelSignpost);
     freeFBXObject(&modelSign);
     freeFBXObject(&modelFloor);
+    freeFBXObject(&modelTrain);
+    freeFBXObject(&modelHand);
     freeFBXObject(&camProxy);
     C3D_TexDelete(&texBase);
     C3D_TexDelete(&texSky);
