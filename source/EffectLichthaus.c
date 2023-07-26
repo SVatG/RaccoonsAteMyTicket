@@ -35,6 +35,7 @@ static fbxBasedObject camProxy;
 
 static const struct sync_track* syncOff;
 static const struct sync_track* syncSky;
+static const struct sync_track* syncBlink;
 
 void effectLichthausInit() {
     // Prep general info: Shader (precompiled in main for important ceremonial reasons)
@@ -53,13 +54,14 @@ void effectLichthausInit() {
 
     // Load a model
     loadTexture(&texBase, NULL, "romfs:/tex_licht.bin");
-    loadTexture(&texSky, &texSkyCube, "romfs:/sky_cube.bin");
+    loadTexture(&texSky, &texSkyCube, "romfs:/sky_cube2.bin");
     modelRobo = loadFBXObject("romfs:/obj_robot_trainbot.vbo", &texBase, "lichthaus.frame");
     modelLichthaus = loadFBXObject("romfs:/obj_robot_lichthaus.vbo", &texBase, "lichthaus.frame");
     camProxy = loadFBXObject("romfs:/obj_robot_cam_proxy.vbo", &texBase, "lichthaus.camera");
 
     syncOff = sync_get_track(rocket, "lichthaus.offset");
     syncSky = sync_get_track(rocket, "lichthaus.sky");
+    syncBlink = sync_get_track(rocket, "lichthaus.blink");
 
     loadTexture(&texFg, NULL, "romfs:/tex_fg5.bin");
 }
@@ -97,7 +99,8 @@ static void drawModel(fbxBasedObject* model, float row) {
     C3D_LightEnvLut(&lightEnv, GPU_LUT_D0, GPU_LUTINPUT_LN, false, &lutPhong);
     
     // Add funny edge lighting that makes 3D pop
-    float lightStrengthFresnel = 0.5;
+    float syncBlinkVal = sync_get_val(syncBlink, row);
+    float lightStrengthFresnel = 0.5 + syncBlinkVal;
     LightLut_FromFunc(&lutShittyFresnel, badFresnel, lightStrengthFresnel, false);
     C3D_LightEnvLut(&lightEnv, GPU_LUT_FR, GPU_LUTINPUT_NV, false, &lutShittyFresnel);
     C3D_LightEnvFresnel(&lightEnv, GPU_PRI_SEC_ALPHA_FRESNEL);
@@ -109,9 +112,9 @@ static void drawModel(fbxBasedObject* model, float row) {
     C3D_LightPosition(&light, &lightVec);
 
     C3D_Material lightMaterial = {
-        { 0.2, 0.2, 0.2 }, //ambient
+        { 0.2 + syncBlinkVal * 0.4, 0.2 - syncBlinkVal * 0.2, 0.2 - syncBlinkVal * 0.2 }, //ambient
         { 1.0,  1.0,  1.0 }, //diffuse
-        { 1.0f, 1.0f, 1.0f }, //specular0
+        { 1.0f, 1.0f - syncBlinkVal, 1.0f - syncBlinkVal }, //specular0
         { 0.0f, 0.0f, 0.0f }, //specular1
         { 0.0f, 0.0f, 0.0f }, //emission
     };
