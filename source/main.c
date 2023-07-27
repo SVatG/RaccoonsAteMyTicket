@@ -90,6 +90,11 @@ extern void effectSlideInit();
 extern void effectSlideRender(C3D_RenderTarget* targetLeft, C3D_RenderTarget* targetRight, float row, float iod);
 extern void effectSlideExit();
 
+// A few externed images for preloading
+extern C3D_Tex texBillboard1;
+extern C3D_Tex texBillboard2;
+extern C3D_Tex texBillboard3;
+
 int main() {
     bool DUMPFRAMES = false;
     bool DUMPFRAMES_3D = false;
@@ -153,6 +158,11 @@ int main() {
     if (connect_rocket()) {
         return(0);
     }
+
+    // Some funny image preloading so we don't have to do it during the effect
+    loadTextureSys(&texBillboard1, NULL, "romfs:/tex_billboards1.bin");
+    loadTextureSys(&texBillboard2, NULL, "romfs:/tex_billboards1.bin");
+    loadTextureSys(&texBillboard3, NULL, "romfs:/tex_billboards1.bin");
 
     // Load shaders
     vshader_dvlb = DVLB_ParseFile((u32*)vshader_shbin, vshader_shbin_size);

@@ -15,12 +15,10 @@
 			<key value="1" row="1272" interpolation="0"/>
 			<key value="1" row="1294" interpolation="1"/>
 			<key value="0" row="1296" interpolation="0"/>
-			<key value="0" row="1416" interpolation="1"/>
-			<key value="1" row="1424" interpolation="1"/>
-			<key value="0" row="1426" interpolation="0"/>
 			<key value="0" row="1544" interpolation="1"/>
+			<key value="1" row="1551" interpolation="0"/>
 			<key value="1" row="1552" interpolation="1"/>
-			<key value="0" row="1554" interpolation="0"/>
+			<key value="0" row="1555" interpolation="0"/>
 			<key value="0" row="1744" interpolation="1"/>
 			<key value="1" row="1775" interpolation="0"/>
 			<key value="1" row="1808" interpolation="1"/>
@@ -68,10 +66,10 @@
 		<track name="intro.train.frame">
 			<key value="0" row="144" interpolation="1"/>
 			<key value="200" row="255" interpolation="0"/>
-			<key value="0" row="256" interpolation="1"/>
-			<key value="73" row="288" interpolation="0"/>
-			<key value="0" row="320" interpolation="1"/>
-			<key value="73" row="352" interpolation="0"/>
+			<key value="20" row="256" interpolation="1"/>
+			<key value="53" row="288" interpolation="0"/>
+			<key value="10" row="320" interpolation="1"/>
+			<key value="63" row="352" interpolation="0"/>
 			<key value="0" row="384" interpolation="1"/>
 			<key value="73" row="416" interpolation="0"/>
 		</track>
@@ -150,18 +148,27 @@
 		<track name="billboards.frame.frame">
 			<key value="0" row="1288" interpolation="0"/>
 			<key value="0" row="1294" interpolation="1"/>
-			<key value="16" row="1328" interpolation="1"/>
-			<key value="18" row="1392" interpolation="1"/>
-			<key value="40" row="1423" interpolation="0"/>
-			<key value="41" row="1424" interpolation="1"/>
-			<key value="56" row="1456" interpolation="1"/>
-			<key value="60" row="1520" interpolation="1"/>
-			<key value="82" row="1551" interpolation="0"/>
-			<key value="83.9" row="1552" interpolation="1"/>
-			<key value="84" row="1584" interpolation="1"/>
-			<key value="94" row="1620" interpolation="1"/>
-			<key value="100" row="1680" interpolation="1"/>
-			<key value="120" row="1808" interpolation="0"/>
+			<key value="10" row="1312" interpolation="1"/>
+			<key value="11" row="1325" interpolation="1"/>
+			<key value="25" row="1343" interpolation="1"/>
+			<key value="26" row="1357" interpolation="1"/>
+			<key value="40" row="1376" interpolation="1"/>
+			<key value="41" row="1390" interpolation="1"/>
+			<key value="56" row="1410" interpolation="1"/>
+			<key value="57" row="1424" interpolation="1"/>
+			<key value="70" row="1440" interpolation="1"/>
+			<key value="71" row="1454" interpolation="1"/>
+			<key value="85" row="1472" interpolation="1"/>
+			<key value="86" row="1486" interpolation="1"/>
+			<key value="99" row="1502" interpolation="1"/>
+			<key value="100" row="1516" interpolation="1"/>
+			<key value="113" row="1533" interpolation="1"/>
+			<key value="114" row="1547" interpolation="1"/>
+			<key value="120" row="1551" interpolation="0"/>
+			<key value="126" row="1552" interpolation="1"/>
+			<key value="253" row="1553" interpolation="1"/>
+			<key value="372" row="1807" interpolation="0"/>
+			<key value="240" row="1808" interpolation="0"/>
 		</track>
 		<track name="zoom.frame.frame">
 			<key value="0" row="2696" interpolation="0"/>
@@ -358,12 +365,9 @@
 		</track>
 		<track name="billboards.tframe.frame">
 			<key value="0" row="1294" interpolation="1"/>
-			<key value="16" row="1328" interpolation="1"/>
-			<key value="18" row="1384" interpolation="1"/>
 			<key value="40" row="1423" interpolation="0"/>
 			<key value="41" row="1424" interpolation="1"/>
-			<key value="60" row="1520" interpolation="1"/>
-			<key value="82" row="1551" interpolation="0"/>
+			<key value="120" row="1551" interpolation="0"/>
 			<key value="83.9" row="1552" interpolation="1"/>
 			<key value="200" row="1584" interpolation="1"/>
 			<key value="100" row="1680" interpolation="1"/>
@@ -450,6 +454,32 @@
 			<key value="0" row="2575" interpolation="0"/>
 			<key value="1" row="2576" interpolation="3"/>
 			<key value="0" row="2616" interpolation="0"/>
+		</track>
+		<track name="zoom.hand.frame">
+			<key value="60" row="2696" interpolation="1"/>
+			<key value="1" row="2727" interpolation="0"/>
+			<key value="60" row="2728" interpolation="1"/>
+			<key value="1" row="2759" interpolation="0"/>
+			<key value="60" row="2760" interpolation="1"/>
+			<key value="1" row="2791" interpolation="0"/>
+			<key value="60" row="2792" interpolation="1"/>
+			<key value="1" row="2823" interpolation="0"/>
+			<key value="60" row="2824" interpolation="1"/>
+			<key value="1" row="2855" interpolation="0"/>
+			<key value="60" row="2856" interpolation="1"/>
+			<key value="1" row="2887" interpolation="0"/>
+			<key value="60" row="2888" interpolation="1"/>
+			<key value="1" row="2919" interpolation="0"/>
+			<key value="60" row="2920" interpolation="1"/>
+			<key value="1" row="2951" interpolation="0"/>
+			<key value="60" row="2952" interpolation="1"/>
+			<key value="1" row="2983" interpolation="0"/>
+			<key value="60" row="2984" interpolation="1"/>
+			<key value="1" row="3015" interpolation="0"/>
+			<key value="60" row="3016" interpolation="1"/>
+			<key value="1" row="3047" interpolation="0"/>
+			<key value="60" row="3048" interpolation="1"/>
+			<key value="1" row="3079" interpolation="0"/>
 		</track>
 	</tracks>
 	<bookmarks/>

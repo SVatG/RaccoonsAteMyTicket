@@ -33,6 +33,7 @@ static C3D_Tex texFg;
 static fbxBasedObject modelSignpost;
 static fbxBasedObject modelSign;
 static fbxBasedObject modelCube;
+static fbxBasedObject modelHand;
 
 static const struct sync_track* syncSky;
 static const struct sync_track* sync_text;
@@ -113,10 +114,10 @@ static void signSetStrings(float row) {
         fontRender(SCREEN31, "pcy");
     }
     if(text_frame == 1) {
-        fontRender(SCREEN20, "             gfx");
-        fontRender(SCREEN21, "          violet");
-        fontRender(SCREEN30, "gfx     gfx");
-        fontRender(SCREEN31, "dot   halcy");
+        fontRender(SCREEN20, "gfx          gfx");
+        fontRender(SCREEN21, "dot       violet");
+        fontRender(SCREEN30, "gfx        gfx");
+        fontRender(SCREEN31, "sunspire halcy");
     }
     if(text_frame == 2) {
         fontRender(SCREEN20, "           music");
@@ -167,6 +168,7 @@ void effectInfinizoomInit() {
     modelSignpost = loadFBXObject("romfs:/obj_signpost_sign_post.vbo", &texBase, "zoom.frame");
     modelSign = loadFBXObject("romfs:/obj_signpost_sign_signs.vbo", &texScroll, "zoom.frame");
     modelCube = loadFBXObject("romfs:/obj_cube_cube.vbo", &texCube, "zoom.frame");
+    modelHand = loadFBXObject("romfs:/obj_signpost_hand.vbo", &texBase, "zoom.hand");
 
     sync_text = sync_get_track(rocket, "zoom.text");
     syncSky = sync_get_track(rocket, "zoom.sky");
@@ -287,7 +289,7 @@ static void draw_zoom_stuff(float row, C3D_Mtx* baseview, C3D_Mtx* camMat, C3D_M
     // Drawing
     float zlvlo = sync_get_val(sync_zoom, row), zpow = 2.0;//sync_get_val(sync_zoompow, row);
     float zlvl=fmodf(zlvlo,1);
-    float zfactor= 30;//sync_get_val(sync_zfactor, row);
+    float zfactor= 30;//sync_get_val(sync_zfactor, rotw);
     float rotmul = sync_get_val(sync_rotmul, row);
     float xoff = 0;
 
@@ -300,6 +302,7 @@ static void draw_zoom_stuff(float row, C3D_Mtx* baseview, C3D_Mtx* camMat, C3D_M
 
     setBonesFromSync(&modelSign, uLocBone, 0.0);
     setBonesFromSync(&modelSignpost, uLocBone, 0.0);
+    setBonesFromSync(&modelHand, uLocBone, row);
 
     for (int i = -1; i <= 5; ++i) {
         if (!(i >= 0 && i < 30)) continue;
@@ -324,8 +327,7 @@ static void draw_zoom_stuff(float row, C3D_Mtx* baseview, C3D_Mtx* camMat, C3D_M
 
         drawModel(&modelSignpost, row);
         drawModel(&modelSign, row);
-        
-        
+        drawModel(&modelHand, row);
     }
 
     setBonesFromSync(&modelCube, uLocBone, 0.0);
@@ -436,6 +438,7 @@ void effectInfinizoomExit() {
     freeFBXObject(&modelSignpost);
     freeFBXObject(&modelSign);
     freeFBXObject(&modelCube);
+    freeFBXObject(&modelHand);
     C3D_TexDelete(&texCube);
     C3D_TexDelete(&texBase);
     C3D_TexDelete(&texSky);

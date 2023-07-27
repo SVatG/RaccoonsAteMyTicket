@@ -28,8 +28,13 @@ static int uLocBone[21];
 static C3D_Tex texBase;
 static C3D_Tex texSky;
 static C3D_TexCube texSkyCube;
+C3D_Tex texBillboard1;
+C3D_Tex texBillboard2;
+C3D_Tex texBillboard3;
 static C3D_Tex texFg;
 static fbxBasedObject modelBillboard;
+static fbxBasedObject modelBillboard2;
+static fbxBasedObject modelBillboard3;
 static fbxBasedObject modelTrain;
 static fbxBasedObject modelFloor;
 static fbxBasedObject camProxy;
@@ -51,8 +56,11 @@ void effectBillboardsInit() {
 
     // Load a model
     loadTexture(&texBase, NULL, "romfs:/tex_intro.bin");
+    //loadTexture(&texBillboard, NULL, "romfs:/tex_billboards1.bin"); // loading moved to main.c as preload
     loadTexture(&texSky, &texSkyCube, "romfs:/sky_cube.bin");
-    modelBillboard = loadFBXObject("romfs:/obj_billboards_billboard.vbo", &texBase, "billboards.frame");
+    modelBillboard = loadFBXObject("romfs:/obj_billboards_billboard.vbo", &texBillboard1, "billboards.frame");
+    modelBillboard2 = loadFBXObject("romfs:/obj_billboards_billboard2.vbo", &texBillboard2, "billboards.frame");
+    modelBillboard3 = loadFBXObject("romfs:/obj_billboards_billboard3.vbo", &texBillboard3, "billboards.frame");
     modelTrain = loadFBXObject("romfs:/obj_billboards_train.vbo", &texBase, "billboards.tframe");
     modelFloor = loadFBXObject("romfs:/obj_billboards_floor.vbo", &texBase, "billboards.frame");
     camProxy = loadFBXObject("romfs:/obj_billboards_cam_proxy.vbo", &texBase, "billboards.frame");
@@ -177,7 +185,7 @@ void effectBillboardsRender(C3D_RenderTarget* targetLeft, C3D_RenderTarget* targ
     C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, uLocModelview,  &modelview);
 
     // Dispatch drawcalls
-    drawModel(&modelBillboard, row);
+    drawModel(&modelBillboard3, row);
     drawModel(&modelFloor, row);
     drawModel(&modelTrain, row);
     skyboxCubeImmediate(&texSky, 1000.0f, vec3(0.0f, 0.0f, 0.0f), &skyview, &projection); 
@@ -197,7 +205,7 @@ void effectBillboardsRender(C3D_RenderTarget* targetLeft, C3D_RenderTarget* targ
         C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, uLocModelview,  &modelview);
 
         // Dispatch drawcalls
-        drawModel(&modelBillboard, row);
+        drawModel(&modelBillboard3, row);
         drawModel(&modelFloor, row);
         drawModel(&modelTrain, row);
         skyboxCubeImmediate(&texSky, 1000.0f, vec3(0.0f, 0.0f, 0.0f), &skyview, &projection); 
@@ -214,10 +222,13 @@ void effectBillboardsRender(C3D_RenderTarget* targetLeft, C3D_RenderTarget* targ
 
 void effectBillboardsExit() {
     freeFBXObject(&modelBillboard);
+    freeFBXObject(&modelBillboard2);
+    freeFBXObject(&modelBillboard3);
     freeFBXObject(&modelTrain);
     freeFBXObject(&modelFloor);
     freeFBXObject(&camProxy);
     C3D_TexDelete(&texBase);
+    //C3D_TexDelete(&texBillboard);
     C3D_TexDelete(&texSky);
     C3D_TexDelete(&texFg);
 }

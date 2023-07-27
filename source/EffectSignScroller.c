@@ -265,6 +265,7 @@ void effectSignScrollerRender(C3D_RenderTarget* targetLeft, C3D_RenderTarget* ta
     C3D_FrameDrawOn(targetLeft);
     C3D_RenderTargetClear(targetLeft, C3D_CLEAR_ALL, 0x404040FF, 0);
 
+    // hardcode a bunch of crap so the skybox stops flickering
     float zfar = 5010.0f;
     if(row > 1200.0f) {
         zfar = 5000.0f;
@@ -281,6 +282,8 @@ void effectSignScrollerRender(C3D_RenderTarget* targetLeft, C3D_RenderTarget* ta
     drawModel(&modelFloor, row);
     drawModel(&modelHand, row);
     drawModel(&modelTrain, row);
+
+    // jshjkasdk HACK
     if(row < 1200.0f) {
         if(row < 900.0f) {
             skyboxCubeImmediate(&texSky, 3000.0f, vec3(0.0f, 0.0f, 0.0f), &skyview, &projection);

@@ -531,6 +531,30 @@ void loadTexture(C3D_Tex* tex, C3D_TexCube* cube, const char* path) {
     Tex3DS_TextureFree(t3x);
 }
 
+// Texture loading helper using t3x format files and loading from romfs
+// this one loads to main memory rather than vram
+void loadTextureSys(C3D_Tex* tex, C3D_TexCube* cube, const char* path) {
+    FILE* f = fopen(path, "rb");
+    if (!f) {
+        printf("Texture file not found: %s\n", path);
+        return;
+    }
+    
+    Tex3DS_Texture t3x = Tex3DS_TextureImportStdio(f, tex, cube, false); 
+    fclose(f); 
+    if (!t3x) {
+        printf("Texture load failure on %s\n", path);
+        return;
+    }
+    
+    // Set basic options 
+    C3D_TexSetFilter(tex, GPU_LINEAR, GPU_LINEAR);
+    C3D_TexSetWrap(tex, GPU_REPEAT, GPU_REPEAT);
+
+    // Delete the t3x object since we don't need it
+    Tex3DS_TextureFree(t3x);
+}
+
 // Set bone mat uniforms from sync value
 // Lerps the matrices for nicer between frame interpolation
 // Assumes loop from last to first frame
