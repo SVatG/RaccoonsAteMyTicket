@@ -96,7 +96,7 @@ extern C3D_Tex texBillboard2;
 extern C3D_Tex texBillboard3;
 
 int main() {
-    bool DUMPFRAMES = true;
+    bool DUMPFRAMES = false;
     bool DUMPFRAMES_3D = false;
     float DUMPFRAMES_3D_SEP = 0.4;
 
@@ -231,7 +231,7 @@ int main() {
         }
         else {
             printf("Frame dump %d\n", fc);
-            row = ((double)fc * (32000.0 * 2.0 / 60.0)) / (double)SAMPLES_PER_ROW;
+            row = ((double)fc * (((float)SONG_SPS) * 2.0 / 60.0)) / (double)SAMPLES_PER_ROW;
         }
 
 #ifndef SYNC_PLAYER
