@@ -678,7 +678,7 @@ void skyboxCubeImmediate(C3D_Tex* texture, float r, vec3_t cp, C3D_Mtx* modelvie
     C3D_TexEnvSrc(env, C3D_Both, GPU_TEXTURE0, 0, 0);
     C3D_TexEnvFunc(env, C3D_Both, GPU_REPLACE);
     C3D_TexBind(0, texture);
-    C3D_TexSetFilter(texture, GPU_LINEAR, GPU_NEAREST);
+    C3D_TexSetFilter(texture, GPU_LINEAR, GPU_LINEAR);
     C3D_TexSetWrap(texture, GPU_CLAMP_TO_EDGE, GPU_CLAMP_TO_EDGE);
 
     // Set up shader uniforms

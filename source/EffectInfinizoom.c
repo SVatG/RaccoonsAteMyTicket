@@ -120,8 +120,10 @@ static void signSetStrings(float row) {
         fontRender(SCREEN31, "sunspire halcy");
     }
     if(text_frame == 2) {
-        fontRender(SCREEN20, "           music");
+        fontRender(SCREEN20, "             gfx");
         fontRender(SCREEN21, "     Saga_Musix");
+        fontRender(SCREEN30, "music       ");
+        fontRender(SCREEN31, "Saga_Musix");
     }
     if(text_frame == 3) {
         fontRender(SCREEN20, "September 8-10");

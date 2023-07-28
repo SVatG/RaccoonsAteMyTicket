@@ -96,7 +96,7 @@ extern C3D_Tex texBillboard2;
 extern C3D_Tex texBillboard3;
 
 int main() {
-    bool DUMPFRAMES = false;
+    bool DUMPFRAMES = true;
     bool DUMPFRAMES_3D = false;
     float DUMPFRAMES_3D_SEP = 0.4;
 
@@ -161,8 +161,8 @@ int main() {
 
     // Some funny image preloading so we don't have to do it during the effect
     loadTextureSys(&texBillboard1, NULL, "romfs:/tex_billboards1.bin");
-    loadTextureSys(&texBillboard2, NULL, "romfs:/tex_billboards1.bin");
-    loadTextureSys(&texBillboard3, NULL, "romfs:/tex_billboards1.bin");
+    loadTextureSys(&texBillboard2, NULL, "romfs:/tex_billboards2.bin");
+    loadTextureSys(&texBillboard3, NULL, "romfs:/tex_billboards3.bin");
 
     // Load shaders
     vshader_dvlb = DVLB_ParseFile((u32*)vshader_shbin, vshader_shbin_size);
@@ -231,7 +231,7 @@ int main() {
         }
         else {
             printf("Frame dump %d\n", fc);
-            row = ((double)fc * (32000.0 / 30.0)) / (double)SAMPLES_PER_ROW;
+            row = ((double)fc * (32000.0 * 2.0 / 60.0)) / (double)SAMPLES_PER_ROW;
         }
 
 #ifndef SYNC_PLAYER
@@ -289,7 +289,7 @@ int main() {
             u8* fbl = gfxGetFramebuffer(GFX_TOP, GFX_LEFT, NULL, NULL);
 
             char fname[255];
-            sprintf(fname, "3ds/dump%d/fb_left_%08d.raw", (fc/1000)+1, fc);
+            sprintf(fname, "dump/dump%d/fb_left_%08d.raw", (fc/2000)+1, fc);
             FILE* file = fopen(fname,"w");
             fwrite(fbl, sizeof(int32_t), SCREEN_HEIGHT * SCREEN_WIDTH, file);
             fflush(file);
@@ -297,7 +297,7 @@ int main() {
 
             if(DUMPFRAMES_3D) {
                 u8* fbr = gfxGetFramebuffer(GFX_TOP, GFX_RIGHT, NULL, NULL);
-                sprintf(fname, "3ds/dump%d/fb_right_%08d.raw", (fc/1000)+1, fc);
+                sprintf(fname, "dump/dump%d/fb_right_%08d.raw", (fc/2000)+1, fc);
                 file = fopen(fname,"w");
                 fwrite(fbr, sizeof(int32_t), SCREEN_HEIGHT * SCREEN_WIDTH, file);
                 fflush(file);

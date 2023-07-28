@@ -39,6 +39,8 @@ static fbxBasedObject modelTrain;
 static fbxBasedObject modelFloor;
 static fbxBasedObject camProxy;
 
+static const struct sync_track* syncBoardSel;
+
 void effectBillboardsInit() {
     // Prep general info: Shader (precompiled in main for important ceremonial reasons)
     C3D_BindProgram(&shaderProgramBones);
@@ -65,6 +67,8 @@ void effectBillboardsInit() {
     modelFloor = loadFBXObject("romfs:/obj_billboards_floor.vbo", &texBase, "billboards.frame");
     camProxy = loadFBXObject("romfs:/obj_billboards_cam_proxy.vbo", &texBase, "billboards.frame");
     loadTexture(&texFg, NULL, "romfs:/tex_fg3.bin");
+
+    syncBoardSel = sync_get_track(rocket, "billboards.select");
 }
 
 // TODO: Split out shade setup
@@ -184,8 +188,18 @@ void effectBillboardsRender(C3D_RenderTarget* targetLeft, C3D_RenderTarget* targ
     C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, uLocProjection, &projection);
     C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, uLocModelview,  &modelview);
 
+    int board = (int)(sync_get_val(syncBoardSel, row));
+
     // Dispatch drawcalls
-    drawModel(&modelBillboard3, row);
+    if(board == 0) {
+        drawModel(&modelBillboard, row);
+    }
+    else if(board == 1) {
+        drawModel(&modelBillboard2, row);
+    }
+    else if(board == 2) {
+        drawModel(&modelBillboard3, row);
+    }
     drawModel(&modelFloor, row);
     drawModel(&modelTrain, row);
     skyboxCubeImmediate(&texSky, 1000.0f, vec3(0.0f, 0.0f, 0.0f), &skyview, &projection); 
@@ -205,7 +219,15 @@ void effectBillboardsRender(C3D_RenderTarget* targetLeft, C3D_RenderTarget* targ
         C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, uLocModelview,  &modelview);
 
         // Dispatch drawcalls
-        drawModel(&modelBillboard3, row);
+        if(board == 0) {
+            drawModel(&modelBillboard, row);
+        }
+        else if(board == 1) {
+            drawModel(&modelBillboard2, row);
+        }
+        else if(board == 2) {
+            drawModel(&modelBillboard3, row);
+        }
         drawModel(&modelFloor, row);
         drawModel(&modelTrain, row);
         skyboxCubeImmediate(&texSky, 1000.0f, vec3(0.0f, 0.0f, 0.0f), &skyview, &projection); 

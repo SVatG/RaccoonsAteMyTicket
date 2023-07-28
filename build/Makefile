@@ -5,9 +5,9 @@ include ../config.mk
 BASEDIR := ../
 
 # Binary name, author name, desc
-TARGET := revision23
-AUTHOR := others and also SVatG
-DESC := tbb
+TARGET := evoke23
+AUTHOR := SVatG, k2 and SunSpire
+DESC := raccoons ate my ticket
 
 # Working directories
 BUILD := $(BASEDIR)/build
