@@ -6,7 +6,7 @@ BASEDIR := ../
 
 # Binary name, author name, desc
 TARGET := evoke23
-AUTHOR := SVatG, k2 and SunSpire
+AUTHOR := SVatG, K2 and Titan
 DESC := raccoons ate my ticket
 
 # Working directories

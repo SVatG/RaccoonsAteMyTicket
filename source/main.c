@@ -96,9 +96,9 @@ extern C3D_Tex texBillboard2;
 extern C3D_Tex texBillboard3;
 
 int main() {
-    bool DUMPFRAMES = false;
-    bool DUMPFRAMES_3D = false;
-    float DUMPFRAMES_3D_SEP = 0.4;
+    bool DUMPFRAMES = true;
+    bool DUMPFRAMES_3D = true;
+    float DUMPFRAMES_3D_SEP = 0.55;
 
     // Set up effect list. Sequencing is done in Rocket
     #define EFFECT_MAX 6
@@ -213,6 +213,10 @@ int main() {
     printf(" 8th to 10th September 2023\n");
     printf(" Bremen, Germany\n");
 
+    // wait a little for things (audio) to properly load in
+    sleep(10);
+
+    // global sync stuff
     const struct sync_track* sync_fade = sync_get_track(rocket, "global.fade");
     const struct sync_track* sync_effect = sync_get_track(rocket, "global.effect");;    
     const struct sync_track* sync_img = sync_get_track(rocket, "global.image");
@@ -225,6 +229,7 @@ int main() {
     row = audio_get_row();
 
     int fc = 0;
+    //int fc = 869;
     while (aptMainLoop()) {
         if (!DUMPFRAMES) {
             row = audio_get_row();

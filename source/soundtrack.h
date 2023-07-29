@@ -19,7 +19,7 @@
 #define AUDIO_BUFSIZE (512 * CHANNELS)
 #define SONG_BPM 136.36363636
 #define SONG_BPS (SONG_BPM / 60.0)
-#define SONG_SPS 44100
+#define SONG_SPS 32000
 #define SONG_SPB (SONG_SPS / SONG_BPS) 
 #define MUSIC_SIZE ((size_t)(MUSIC_LEN_SEC * CHANNELS * SONG_SPS * sizeof(int16_t)))
 
